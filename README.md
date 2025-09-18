@@ -1,9 +1,7 @@
 
 # Introduction
 
-This workshop is designed to give beginners a solid foundation in **Python programming**, with a specific focus on applications in cancer biology. Participants will gain a thorough understanding of essential programming concepts through a blend of theoretical lessons, hands-on coding exercises, and practical applications. 
-
-The workshop will cover essential programming concepts and gradually introduce more advanced topics, with a focus on using the Pandas library for efficient data handling and analysis and matplotlib library for data visualization. By the end of the workshop, attendees will be equipped with the skills to enhance the reproducibility and efficiency of scientific research through powerful data analysis tools and effective visualization techniques.
+This introduction to Python workshop will provide beginners with experience loading, exploring, and visualising biological data using the pandas and matplotlib libraries. The example data used is clinical and gene expression data from the METABRIC breast cancer dataset, allowing participants to work with realistic biomedical data structures and learn how to generate meaningful summaries and plots.
 
 # Instructor
 
@@ -11,13 +9,14 @@ Sanduni Rajapaksa
 
 # Learning Objectives
 
-Participants will gain the following skills:
 
-- Proficiency in using Python for data analysis.
-- Basic Python programming skills.
-- Reading, tidying, and joining datasets using `pandas` library. 
-- Data manipulation and transformation using `pandas` library.
-- Creating various types of plots using `matplotlib` library.
+By the end of this training, participants will be able to:
+
+- Load tabular data into Python using pandas 
+- Calculate basic statistics such as mean and median
+- Filter and slice data based on clinical features
+- Produce simple plots such as scatter plots and boxplots using matplotlib
+- Modify the appearance of plots 
 
 # Data
 
@@ -33,7 +32,7 @@ Both the clinical data and the gene expression values were downloaded from
 
 We excluded observations for patient tumor samples lacking expression data, resulting in a data set with fewer rows.
 
-# Credits and Acknowledgement
+# Credits and Acknowledgements
 
 These content were adapted from the following course materials:
 
