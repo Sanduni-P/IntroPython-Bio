@@ -1,0 +1,44 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Introduction to Python",
+    "section": "",
+    "text": "This introduction to Python workshop will provide beginners with experience loading, exploring, and visualising biological data using the pandas and matplotlib libraries. The example data used is clinical and gene expression data from the METABRIC breast cancer dataset, allowing participants to work with realistic biomedical data structures and learn how to generate meaningful summaries and plots."
+  },
+  {
+    "objectID": "index.html#introduction",
+    "href": "index.html#introduction",
+    "title": "Introduction to Python",
+    "section": "",
+    "text": "This introduction to Python workshop will provide beginners with experience loading, exploring, and visualising biological data using the pandas and matplotlib libraries. The example data used is clinical and gene expression data from the METABRIC breast cancer dataset, allowing participants to work with realistic biomedical data structures and learn how to generate meaningful summaries and plots."
+  },
+  {
+    "objectID": "index.html#learning-objectives",
+    "href": "index.html#learning-objectives",
+    "title": "Introduction to Python",
+    "section": "Learning Objectives",
+    "text": "Learning Objectives\nBy the end of this training, participants will be able to:\n\nLoad tabular data into Python using pandas\nCalculate basic statistics such as mean and median\nFilter and slice data based on clinical features\nProduce simple plots such as scatter plots and boxplots using matplotlib\nModify the appearance of plots"
+  },
+  {
+    "objectID": "index.html#prerequisites",
+    "href": "index.html#prerequisites",
+    "title": "Introduction to Python",
+    "section": "Prerequisites",
+    "text": "Prerequisites\nBefore starting this course you will need to ensure that your computer is set up with the required software. If you have any difficulty installing any of this software then please contact the trainer at sandun.rajapaksa@petermac.org for help.\n\nStep 1: Installing Python\nThere are multiple ways you can use Python. The easiest and most convenient way is to install Python on your own computer. However, if you prefer to avoid the installation process or need additional computational capabilities the alternative option is to use the cluster.\n\nInstall Python on your own computer\nFor new users, we recommend installing Anaconda. Anaconda conveniently installs Python, the Jupyter Notebook, and other commonly used packages.\n\n\nWindows\n\nIf you have admin rights, follow Anaconda Navigator Installation. Otherwise, contact the IT Support.\n\n\n\nmacOS\n\nInstall the Anaconda Navigator from the Anaconda Navigator Installation.\n\n\n\nLinux\n\nInstall the Anaconda Navigator from here.\n\nOnce installed, open the anaconda-navigator directly or type the following command in the terminal to open it.\n\nanaconda-navigator\n\n\n\n\nFigure 1: Anaconda Navigator\n\n\nUseful links:\n\nGetting started with Navigator\nHow to create/manage environments?\n\n\n\n\nStep 2: Installing Integrated Development Environment (IDE)\nOnce Python is installed, the next step is to install a preferred Integrated Development Environment (IDE) to start coding with Python. If you are a new user, we suggest using the Jupyter Notebook.\n\nInstall Jupyter Notebook on your own computer\n\nOpen Anaconda Navigator and click install Jupyter Notebook.\nLaunch the Jupyter Notebook directly from the Anaconda Navigator or start the notebook server from the command line by typing the following command.\n\n\njupyter notebook \n\n\nYou should see the notebook home page open in your web browser.\n\n\n\n\nFigure 2: Jupyter Notebook\n\n\n\nTo install Jupyter Notebook, see Installing Jupyter Notebook.\n\nUseful links:\n\nJupyter Notebook Documentation\nHow to use Jupyter Notebooks - DataCamp\nJupyter Notebook: An Introduction\n\n\n\n\nStep 3: Installing a Python library\nIf you are currently using Python using conda (or Anaconda) or if you are using the cluster, a Python library can be installed with Anaconda or Miniconda. For example, to install the pandas, numpy and matplotlib libraries of Python use the following command on the terminal.\n\nconda install -c conda-forge pandas matplotlib numpy\n\nIf you installed Python using Pip, then a Python library can be installed via pip from Python Package Index (PyPI). To install the required libraries of Python use the following command on the terminal.\n\npip install pandas matplotlib numpy\n\nIf Anaconda Navigator is installed and you prefer to use the Navigator instead of typing commands on a terminal refer to Installing and managing Python packages."
+  },
+  {
+    "objectID": "index.html#data",
+    "href": "index.html#data",
+    "title": "Introduction to Python",
+    "section": "Data",
+    "text": "Data\nThe Metabric study characterized the genomic mutations and gene expression profiles for 2509 primary breast tumours. In addition to the gene expression data generated using microarrays, genome-wide copy number profiles were obtained using SNP microarrays. Targeted sequencing was performed for 2509 primary breast tumours, along with 548 matched normals, using a panel of 173 of the most frequently mutated breast cancer genes as part of the Metabric study.\nReferences:\n\nCurtis et al., Nature 486:346-52, 2012\nPereira et al., Nature Communications 7:11479, 2016\n\nBoth the clinical data and the gene expression values were downloaded from cBioPortal.\nWe excluded observations for patient tumor samples lacking expression data, resulting in a data set with fewer rows.\nThe following table illustrates the column names and descriptions of the metabric data frame we will be using for subsequent analysis.\n\n\nDescription of column names in the metabric dataset\n\n\nColumn Name\nDescription\n\n\n\n\nPatient_ID\nIdentifier to uniquely specify a patient.\n\n\nCohort\nStudy group or cohort to which the patient belongs.\n\n\nAge_at_diagnosis\nAge at Diagnosis\n\n\nSurvival_time/Os_Months\nOverall survival in months since initial diagnosis.\n\n\nSurvival_status/Os_Status\nOverall patient survival status.\n\n\nVital_status\nThe survival state of the person.\n\n\nChemotherapy\nChemotherapy.\n\n\nRadioTherapy\nRadioTherapy\n\n\nTumor_size\nTumor size in mm.\n\n\nTumor_stage\nTumor stage.\n\n\nNeoplasm_histologic_grade/Grade\nNumeric value to express the degree of abnormality of cancer cells, a measure of differentiation and aggressiveness.\n\n\nLymph_nodes_examined_positive\nNumber of lymph nodes positive\n\n\nLymph_nodes_status\nLymph nodes status\n\n\nCancer_type\nCancer Type\n\n\nER_status/Er_Ihc\nER Status measured by IHC\n\n\nPR_Status\nPR Status\n\n\nHER2_status\nHER2 Status\n\n\nHER2_status_measured_by_SNP6\nHER2 status measured by SNP6\n\n\nPAM50/Claudin_Subtype\nPam50 + Claudin-low subtype.\n\n\n3-gene_classifier/Threegene\n3-Gene classifier subtype\n\n\nNottingham_prognostic_index/Npi\nNottingham prognostic index\n\n\nCellularity\nTumor Content\n\n\nIntegrative_cluster/Intclust\nIntegrative Cluster\n\n\nMutation_count\nMutation count\n\n\nFOXA1\nFOXA1 Expression data\n\n\nMLPH\nMLPH Expression data\n\n\nESR1\nESR1 Expression data\n\n\nERBB2\nERBB2 Expression data\n\n\nTP53\nTP53 Expression data\n\n\nPIK3CA\nPIK3CA Expression data\n\n\nGATA3\nGATA3 Expression data\n\n\nPGR\nPGR Expression data\n\n\nCancer_Type_Detailed\nCancer Type Detailed\n\n\nOncotree_Code\nOncotree Code\n\n\nSample_Type\nThe type of sample (i.e., normal, primary, met, recurrence).\n\n\nTmb_Nonsynonymous\nTMB (nonsynonymous)"
+  },
+  {
+    "objectID": "index.html#credits-and-acknowledgements",
+    "href": "index.html#credits-and-acknowledgements",
+    "title": "Introduction to Python",
+    "section": "Credits and Acknowledgements",
+    "text": "Credits and Acknowledgements\nThis content was adapted from the following course materials:\n\nR for Data Science book\nOHI Data Science Training\nData Carpentry\nWEHI tidyr coursebook by Brendan R. E. Ansell\nContent developed by Maria Doyle."
+  }
+]
