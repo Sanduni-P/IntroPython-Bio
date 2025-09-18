@@ -1,0 +1,25 @@
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore environment files
+.env
+*.env
+
+# Ignore Anaconda files
+env/
+*.conda
+*.h5
+
+# Ignore Quarto files
+*.qmd
+*.qmd.lock
+*.html
+
+# Ignore other temporary files
+*.log
+*.tmp
+*.DS_Store

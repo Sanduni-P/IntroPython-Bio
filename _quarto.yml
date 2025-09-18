@@ -1,0 +1,29 @@
+url: https://sanduni-p.github.io/IntroPython-Bio/
+project:
+  type: website
+
+website:
+  title: "Introduction to Python"
+  navbar:
+    left:
+      - href: index.html
+        text: Home
+      - text: Workshop Materials (coming soon)
+
+format:
+  html:
+    theme: 
+      - cerulean
+      - utils/css/custom.scss
+    toc: true
+    toc-expand: 1
+    toc-title: Contents
+    embed-resources: true
+    css: utils/css/custom.css
+    smooth-scroll: true
+    code-copy: hover
+    df-print: kable
+    
+jupyter: quarto-bio
+execute:
+  cache: false
