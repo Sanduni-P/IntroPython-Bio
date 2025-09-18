@@ -34,7 +34,7 @@ We excluded observations for patient tumor samples lacking expression data, resu
 
 # Credits and Acknowledgements
 
-These content were adapted from the following course materials:
+This content was adapted from the following course materials:
 
  - [R for Data Science book](https://r4ds.had.co.nz/index.html)
  - [OHI Data Science Training](http://ohi-science.org/data-science-training/index.html)

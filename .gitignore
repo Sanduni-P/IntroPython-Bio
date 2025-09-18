@@ -23,3 +23,5 @@ env/
 *.log
 *.tmp
 *.DS_Store
+
+/.quarto/
