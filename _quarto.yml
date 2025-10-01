@@ -8,7 +8,10 @@ website:
     left:
       - href: index.html
         text: Home
-      - text: Workshop Materials (coming soon)
+      - text: Workshop Materials
+        menu: 
+          - text: Introduction to Python 
+            href: vignettes/1_Introduction.qmd
 
 format:
   html:

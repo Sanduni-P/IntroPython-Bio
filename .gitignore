@@ -15,9 +15,13 @@ env/
 *.h5
 
 # Ignore Quarto files
-*.qmd
 *.qmd.lock
 *.html
+
+# Ignore Quarto directories
+.quarto/
+_site/
+docs
 
 # Ignore other temporary files
 *.log

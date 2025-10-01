@@ -1,0 +1,211 @@
+---
+title: "Getting Started with Jupyter Notebook"
+teaching: 10
+exercises: 5
+questions:
+- "How do I use Jupyter Notebook for Python programming?"
+- "What are the different cell types and how do I use them?"
+- "How can I efficiently navigate and edit in Jupyter Notebook?"
+objectives:
+- "Open and create a new Jupyter Notebook"
+- "Understand the difference between edit mode and command mode"
+- "Identify and switch between cell types (Code, Markdown, Raw)"
+- "Use keyboard shortcuts to work efficiently"
+- "Execute Python code in notebook cells"
+keypoints:
+- "Jupyter Notebook provides an interactive environment for Python programming"
+- "Code cells execute Python code, Markdown cells contain formatted text"
+- "Keyboard shortcuts improve efficiency when working with notebooks"
+- "Edit mode is for typing content, Command mode is for cell operations"
+- "Save your work frequently using Ctrl+S (Cmd+S on Mac)"
+---
+
+{{< include ../_includes/header.qmd >}}
+
+
+## What is Jupyter Notebook?
+
+In this lesson, you'll get started with Jupyter Notebook—a powerful tool for writing, running, and documenting Python code interactively. Notebooks are useful in research and reproducible science because they let you combine your analysis, results, and notes all in one place. 
+
+We'll explore how to open notebooks, use different cell types, and efficiently navigate the interface to support your Python programming.
+
+### Creating a Notebook
+
+#### Open Jupyter Notebook
+   
+Launch Jupyter Notebook from your computer. In the Jupyter interface, click "New" and select "Notebook" to create a new notebook.
+
+::: columns
+::: {.column}
+![](images/new-notebook.png){height="160pt"}
+:::
+
+::: {.column}
+![](images/new-notebook1.png){height="160pt"}
+:::
+:::
+
+#### Navigating Modes
+
+Jupyter Notebook has two modes:
+
+1. **Edit mode** (blue cell border): Type code or text into a cell. Enter edit mode by pressing <kbd>Enter</kbdor clicking inside a cell.
+
+     ![](images/mode-edit.png)
+
+2. **Command mode** (grey cell border): Use keyboard shortcuts to manage cells. Enter command mode by pressing <kbd>Esc</kbd>.
+
+     ![](images/mode-command.png)
+
+#### Cell Types
+   
+Notebooks contain different cell types:
+
+- **Code cells:** For writing and running Python code.
+- **Markdown cells:** For formatted text, headings, lists, etc.
+- **Raw cells:** For unformatted text.
+
+Change cell type using the drop-down menu in the toolbar.
+
+![](images/cell-type.png)
+
+##### Working with Markdown Cells
+
+Markdown cells allow you to add formatted text, explanations, and documentation to your notebook:
+
+1. **Change a cell to Markdown type** using the dropdown menu or press <kbd>M</kbdin command mode
+2. **Add some formatted text:**
+
+```markdown
+# This is a heading
+## This is a subheading
+
+**Bold text** and *italic text*
+
+- Bullet point 1
+- Bullet point 2
+
+```
+
+3. **Run the cell** to see the formatted output
+
+---
+
+### Running and Managing Cells
+
+- **Run a cell:**  <kbd>Shift</kbd> + <kbd>Enter</kbd>
+
+    ![](images/run-cell.png)
+
+- **Run selected cells:**   <kbd>Ctrl</kbd> + <kbd>Enter</kbd> (Mac: <kbd>Cmd</kbd> + <kbd>Enter</kbd>)
+
+- **Run cell and insert below:**  <kbd>Alt</kbd> + <kbd>Enter</kbd> (Mac: <kbd>Option</kbd> + <kbd>Enter</kbd>)
+
+- **Save notebook:**  <kbd>Ctrl</kbd> + <kbd>S</kbd> (Mac: <kbd>Cmd</kbd> + <kbd>S</kbd>)
+
+    ![](images/run-menu.png)
+
+### Useful Shortcuts in Command Mode
+
+- <kbd>Up</kbd>: Select cell above
+- <kbd>Down</kbd>: Select cell below
+- <kbd>Shift</kbd> + <kbd>Up</kbd>: Extend selection above
+- <kbd>Shift</kbd> + <kbd>Down</kbd>: Extend selection below
+- <kbd>A</kbd>: Insert cell above  
+  ![](images/insert-block3.png)
+- <kbd>B</kbd>: Insert cell below  
+  ![](images/insert-block1.png) ![](images/insert-block2.png)
+- <kbd>D</kbd>+ <kbd>D</kbd>: Delete selected cells  
+  ![](images/delete-block.png)
+
+- **View all shortcuts:**  
+  Go to Help → Keyboard Shortcuts, or press <kbd>H</kbdin command mode.
+
+    ![](images/keyboard-shortcuts.png)
+
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Challenge: Your First Markdown and Code Cells
+
+In this exercise, you'll create two new cells in your notebook:
+
+1. A **Markdown cell** to describe the biological question you are investigating. Copy and paste the following markdown text to your notebook and run the cell.
+  ```markdown
+  ## Investigating Gene Expression in Breast Cancer
+
+  We are interested in **analysing the expression levels** of a gene of interest (e.g., *TP53*) across a cohort of breast cancer patients from the METABRIC dataset.
+
+  We will start by creating a small example dataset representing expression levels of *TP53* in 5 patients.
+  ```
+
+
+2. A **Code cell** to simulate and explore a simple biological dataset. Copy and paste the following Python code to another cell in your notebook and run the cell.
+  ```python
+  # Example expression levels of TP53 in 5 patients
+  tp53_expression = [8.5, 7.2, 9.1, 6.8, 7.9]
+
+  # Calculate the average expression
+  average_expression = sum(tp53_expression) / len(tp53_expression)
+
+  print("Average TP53 expression across 5 patients:", average_expression)
+  ```
+
+:::
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+## Solution
+
+1. Create a new notebook.
+
+![](images/jupyter-notebook-open.png)
+
+2. In a new cell, switch to **Markdown mode** (press <kbd>M</kbd>) and copy the following text:
+
+```markdown
+## Investigating Gene Expression in Breast Cancer
+
+We are interested in **analysing the expression levels** of a gene of interest (e.g., *TP53*) across a cohort of breast cancer patients from the METABRIC dataset.
+
+We will start by creating a small example dataset representing expression levels of *TP53* in 5 patients.
+```
+
+Now **run** the Markdown cell (<kbd>Shift</kbd> + <kbd>Enter</kbd> or <kbd>cmd</kbd> + <kbd>Enter</kbd>) to render the formatted text.
+
+3. Create another cell below. Press <kbd>B</kbd> when you are in command mode to insert a cell below. In that cell, **switch to Code mode** (press <kbd>Y</kbd> in command mode) and paste the following Python code:
+
+  ```python
+  # Example expression levels of TP53 in 5 patients
+  tp53_expression = [8.5, 7.2, 9.1, 6.8, 7.9]
+
+  # Calculate the average expression
+  average_expression = sum(tp53_expression) / len(tp53_expression)
+
+  print("Average TP53 expression across 5 patients:", average_expression)
+  ```
+
+Run the cell (<kbd>Shift</kbd> + <kbd>Enter</kbd> or <kbd>cmd</kbd> + <kbd>Enter</kbd>) and check that it displays the average expression.
+
+The output should display:
+
+**Code Cell Output:**
+```
+Average TP53 expression across 5 patients: 7.9
+```
+
+This exercise demonstrates how Jupyter notebooks combine documentation (Markdown) with executable code, making them perfect for reproducible research in bioinformatics.
+:::
+
+{{< include ../_includes/footer.qmd >}}
+---
+<table style="width: 100%; border: none;">
+  <tr>
+    <td style="text-align: right; width: 50%;">
+      [Next →](../vignettes/2_Intro_pandas.qmd)
+    </td>
+  </tr>
+</table>
+    </td>
+  </tr>
+</table>
+   

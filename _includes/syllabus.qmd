@@ -1,0 +1,78 @@
+
+
+```{r}
+#| warning: false
+#| echo: false
+#| results: asis
+
+library(yaml)
+library(dplyr)
+
+# Function to extract metadata from a .qmd file
+extract_metadata <- function(file) {
+  lines <- readLines(file, warn = FALSE)
+  
+  # Identify YAML front matter lines
+  if (length(lines) > 0 && lines[1] == "---") {
+    end_yaml <- which(lines == "---")[-1][1]  # Find the second "---"
+    if (!is.na(end_yaml)) {
+      yaml_content <- lines[2:(end_yaml - 1)]
+      meta <- yaml::yaml.load(paste(yaml_content, collapse = "\n"))
+      
+      return(data.frame(
+        title = ifelse(!is.null(meta$title), meta$title, basename(file)),
+        teaching = ifelse(!is.null(meta$teaching), meta$teaching, "Unknown"), # Teaching time
+        questions = ifelse(!is.null(meta$questions), paste(meta$questions, collapse="<br>"), "No questions listed"),
+        file = file,
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+  return(NULL)
+}
+
+# Get all episode files
+episode_files <- list.files("vignettes", pattern = "\\.qmd$", full.names = TRUE)
+
+# Extract metadata from each episode file
+episode_metadata <- do.call(rbind, lapply(episode_files, extract_metadata))
+
+# Generate syllabus table if episodes exist
+if (!is.null(episode_metadata) && nrow(episode_metadata) > 0) {
+  cat("<style>
+        table.syllabus {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 10px;
+        }
+        .syllabus th, .syllabus td {
+          border: 1px solid #f4f4f4;
+          padding: 8px;
+          text-align: left;
+        }
+        .syllabus th {
+          background-color: #f4f4f4;
+          font-weight: bold;
+        }
+      </style>\n")
+  
+  cat("<table class='syllabus'>\n")
+  cat("<tr><th>Time</th><th>Lesson</th><th>Questions</th></tr>\n")
+  
+  for (i in 1:nrow(episode_metadata)) {
+    episode_link <- gsub("^_episodes/", "", episode_metadata$file[i])  # Remove folder path
+    episode_link <- sub("\\.qmd$", ".html", episode_link)  # Change .md to .html
+    
+    cat(sprintf("<tr><td>%s</td> <td><a href='%s'>%s</a></td> <td>%s</td></tr>\n",
+                episode_metadata$teaching[i],  # Time from teaching metadata
+                episode_link,
+                episode_metadata$title[i],  # Display name without .html
+                episode_metadata$questions[i]))
+  }
+  
+  cat("</table>\n")
+} else {
+  cat("<p>No episodes found.</p>\n")
+}
+```
+

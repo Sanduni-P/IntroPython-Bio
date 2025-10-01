@@ -1,0 +1,47 @@
+::: {.callout-tip icon="false"}
+
+## Overview
+
+```{r, echo=FALSE}
+extract_metadata <- function(file) {
+  lines <- readLines(file, warn = FALSE)
+  
+  # Identify YAML front matter lines
+  if (length(lines) > 0 && lines[1] == "---") {
+    end_yaml <- which(lines == "---")[-1][1]  # Find the second "---"
+    if (!is.na(end_yaml)) {
+      yaml_content <- lines[2:(end_yaml - 1)]
+      meta <- yaml::yaml.load(paste(yaml_content, collapse = "\n"))
+      
+      return(data.frame(
+        teaching = ifelse(!is.null(meta$teaching), meta$teaching, "Unknown"),  
+        exercises = ifelse(!is.null(meta$exercises), meta$exercises, "Unknown"),
+        objectives = ifelse(!is.null(meta$objectives), paste(meta$objectives, collapse="\n   - "), list("No objectives listed")),
+        questions = ifelse(!is.null(meta$questions), paste(meta$questions, collapse="\n   - "), list("No questions listed")),
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+  return(NULL)
+}
+```
+
+```{r, echo=FALSE}
+#| output: asis
+# Extract metadata from the current Quarto document
+metadata <- extract_metadata(knitr::current_input())
+
+if (!is.null(metadata)) {
+  cat("\n\n")  # Ensure Markdown formatting works
+  cat("\n- **Teaching:** ", metadata$teaching)
+  cat("\n- **Exercises:** ", metadata$exercises)
+  cat("\n- **Questions:**")
+  for (item in metadata$questions) cat(paste("\n   - ", item, "\n"))
+  cat("\n- **Objectives:**")
+  for (item in metadata$objectives) cat(paste("\n   - ", item, "\n"))
+} else {
+  cat("No metadata found in the file.")
+}
+```
+
+:::

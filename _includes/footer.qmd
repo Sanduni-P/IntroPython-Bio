@@ -1,0 +1,39 @@
+::: callout-tip
+
+## Key Points
+
+```{r, echo=FALSE}
+extract_metadata <- function(file) {
+  lines <- readLines(file, warn = FALSE)
+  
+  # Identify YAML front matter lines
+  if (length(lines) > 0 && lines[1] == "---") {
+    end_yaml <- which(lines == "---")[-1][1]  # Find the second "---"
+    if (!is.na(end_yaml)) {
+      yaml_content <- lines[2:(end_yaml - 1)]
+      meta <- yaml::yaml.load(paste(yaml_content, collapse = "\n"))
+      
+      return(data.frame(
+        keypoints = ifelse(!is.null(meta$questions), paste(meta$keypoints, collapse="\n   - "), list("No keypoints listed")),
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+  return(NULL)
+}
+```
+
+```{r, echo=FALSE}
+#| output: asis
+# Extract metadata from the current Quarto document
+metadata <- extract_metadata(knitr::current_input())
+
+if (!is.null(metadata)) {
+  cat("\n\n")  # Ensure Markdown formatting works
+  for (item in metadata$keypoints) cat(paste("\n   - ", item, "\n"))
+} else {
+  cat("No metadata found in the file.")
+}
+```
+
+:::

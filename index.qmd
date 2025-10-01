@@ -1,0 +1,197 @@
+---
+title: "Introduction to Python for Biologists"
+---
+
+## Introduction
+
+This introduction to Python workshop will provide beginners with experience loading, exploring, and visualising biological data using the pandas and matplotlib libraries. The example data used is clinical and gene expression data from the METABRIC breast cancer dataset, allowing participants to work with realistic biomedical data structures and learn how to generate meaningful summaries and plots.
+
+## Learning Objectives
+
+By the end of this workshop, you will be able to:
+
+- Load tabular data into Python using pandas 
+- Calculate basic statistics such as mean and median
+- Filter and slice data based on clinical features
+- Produce simple plots such as scatter plots and boxplots using matplotlib
+- Modify the appearance of plots 
+
+
+## Prerequisites
+
+Before starting this course you will need to ensure that your computer is set up with the required software. If you have any difficulty installing any of this software then please contact the trainer at <a href="mailto:sandun.rajapaksa@petermac.org">sandun.rajapaksa@petermac.org</a> for help.
+
+### Step 1: Installing Python
+
+There are multiple ways you can use Python. The easiest and most convenient way is to install Python on your own computer. However, if you prefer to avoid the installation process or need additional computational capabilities the alternative option is to use the cluster.
+
+#### Install Python on your own computer
+
+For new users, we recommend installing **Anaconda**. Anaconda conveniently installs *Python*, the *Jupyter Notebook*, and other commonly used packages.
+
+```{=html}
+<details>
+<summary style="color: #4492B4; font-weight: 600;" >
+Windows
+</summary>
+```
+If you have admin rights, follow [Anaconda Navigator Installation](https://www.anaconda.com/docs/getting-started/anaconda/install#windows-installation). Otherwise, contact the IT Support.
+
+</details>
+
+```{=html}
+<details>
+<summary style="color: #4492B4; font-weight: 600;" >
+macOS
+</summary>
+```
+Install the Anaconda Navigator from the [Anaconda Navigator Installation](https://www.anaconda.com/docs/getting-started/anaconda/install#macos-linux-installation).
+
+</details>
+
+```{=html}
+<details>
+<summary style="color: #4492B4; font-weight: 600;" >
+Linux
+</summary>
+```
+Install the Anaconda Navigator from [here](https://www.anaconda.com/docs/getting-started/anaconda/install#macos-linux-installation).
+
+</details>
+
+Once installed, open the anaconda-navigator directly or type the following command in the terminal to open it.
+
+```{python}
+#| eval: false
+anaconda-navigator
+```
+
+![Figure 1: Anaconda Navigator](vignettes/images/anaconda-navigator.png){fig-align="center"}
+
+**Useful links:**
+
+-   [Getting started with Navigator](https://docs.anaconda.com/free/navigator/getting-started/)
+-   [How to create/manage environments?](https://www.anaconda.com/docs/getting-started/working-with-conda/environments)
+
+### Step 2: Installing Integrated Development Environment (IDE)
+
+Once Python is installed, the next step is to install a preferred Integrated Development Environment (IDE) to start coding with Python. If you are a new user, we suggest using the **Jupyter Notebook**. 
+
+#### Install Jupyter Notebook on your own computer
+
+-   Open Anaconda Navigator and click install Jupyter Notebook.
+-   Launch the Jupyter Notebook directly from the Anaconda Navigator or start the notebook server from the command line by typing the following command.
+
+```{python} 
+#| eval: false
+jupyter notebook 
+```
+
+-   You should see the notebook home page open in your web browser.
+
+![Figure 2: Jupyter Notebook](vignettes/images/jupyter-notebook.png)
+
+-   To install Jupyter Notebook, see [Installing Jupyter Notebook](https://docs.jupyter.org/en/latest/install.html).
+
+**Useful links:**
+
+-   [Jupyter Notebook Documentation](https://jupyter-notebook.readthedocs.io/en/latest/)
+-   [How to use Jupyter Notebooks - DataCamp](https://www.datacamp.com/tutorial/tutorial-jupyter-notebook)
+-   [Jupyter Notebook: An Introduction](https://realpython.com/jupyter-notebook-introduction/)
+
+### Step 3: Installing a Python library
+
+If you are currently using Python using conda (or Anaconda) or if you are using the cluster, a Python library can be installed with Anaconda or Miniconda. For example, to install the `pandas`, `numpy` and `matplotlib` libraries of Python use the following command on the terminal.
+
+```{python} 
+#| eval: false
+conda install -c conda-forge pandas matplotlib numpy
+```
+
+If you installed Python using Pip, then a Python library can be installed via pip from Python Package Index ([PyPI](https://pypi.org/project/pandas)). To install the required libraries of Python use the following command on the terminal.
+
+```{python} 
+#| eval: false
+pip install pandas matplotlib numpy
+```
+
+If Anaconda Navigator is installed and you prefer to use the Navigator instead of typing commands on a terminal refer to [Installing and managing Python packages](https://www.anaconda.com/docs/tools/anaconda-navigator/getting-started#managing-python).
+
+## Course Outline
+
+{{< include _includes/syllabus.qmd >}}
+
+## Data
+
+The Metabric study characterized the genomic mutations and gene expression profiles for 2509 primary breast tumours. In addition to the gene expression data generated using microarrays, genome-wide copy number profiles were obtained using SNP microarrays. Targeted sequencing was performed for 2509 primary breast tumours, along with 548 matched normals, using a panel of 173 of the most frequently mutated breast cancer genes as part of the Metabric study.
+
+**References:**
+
+-   [Curtis *et al.*, Nature 486:346-52, 2012](https://pubmed.ncbi.nlm.nih.gov/22522925)
+-   [Pereira *et al.*, Nature Communications 7:11479, 2016](https://www.ncbi.nlm.nih.gov/pubmed/27161491)
+
+Both the clinical data and the gene expression values were downloaded from [cBioPortal](https://www.cbioportal.org/study/summary?id=brca_metabric).
+
+We excluded observations for patient tumor samples lacking expression data, resulting in a data set with fewer rows.
+
+The following table illustrates the column names and descriptions of the metabric data frame we will be using for subsequent analysis. 
+
+::: scrolling
+```{=html}
+<table class="no-spacing" cellspacing="0" >
+  <caption>Description of column names in the metabric dataset</caption>
+  <thead>
+    <tr>
+      <th>Column Name</th>
+      <th style="padding-left: 120px; " >Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Patient_ID</td>	<td>Identifier to uniquely specify a patient.</td></tr>
+    <tr><td>Cohort</td>	<td>Study group or cohort to which the patient belongs.</td></tr>
+    <tr><td>Age_at_diagnosis</td>	<td>Age at Diagnosis</td></tr>
+    <tr><td>Survival_time/Os_Months</td>	<td>Overall survival in months since initial diagnosis.</td></tr>
+    <tr><td>Survival_status/Os_Status</td>	<td>Overall patient survival status.</td></tr>
+    <tr><td>Vital_status</td>	<td>The survival state of the person.</td></tr>
+    <tr><td>Chemotherapy</td>	<td>Chemotherapy.</td></tr>
+    <tr><td>RadioTherapy</td>	<td>RadioTherapy</td></tr>
+    <tr><td>Tumor_size</td>	<td>Tumor size in mm.</td></tr>
+    <tr><td>Tumor_stage</td>	<td>Tumor stage.</td></tr>
+    <tr><td>Neoplasm_histologic_grade/Grade</td>	<td>Numeric value to express the degree of abnormality of cancer cells, a measure of differentiation and aggressiveness.</td></tr>
+    <tr><td>Lymph_nodes_examined_positive</td>	<td>Number of lymph nodes positive</td></tr>
+    <tr><td>Lymph_nodes_status</td> <td>Lymph nodes status</td></tr>
+    <tr><td>Cancer_type</td>	<td>Cancer Type</td></tr>
+    <tr><td>ER_status</td>	<td>ER Status measured by IHC</td></tr>
+    <tr><td>PR_Status</td>	<td>PR Status</td></tr>
+    <tr><td>HER2_status</td>	<td>HER2 Status</td></tr>
+    <tr><td>HER2_status_measured_by_SNP6</td>	<td>HER2 status measured by SNP6</td></tr>
+    <tr><td>PAM50</td>	<td>Pam50 + Claudin-low subtype.</td></tr>
+    <tr><td>3-gene_classifier</td>	<td>3-Gene classifier subtype</td></tr>
+    <tr><td>Nottingham_prognostic_index</td>	<td>Nottingham prognostic index</td></tr>
+    <tr><td>Cellularity</td>	<td>Tumor Content</td></tr>
+    <tr><td>Integrative_cluster</td>	<td>Integrative Cluster</td></tr>
+    <tr><td>Mutation_count</td>	<td>Mutation count</td></tr>
+    <tr><td>ESR1</td>	<td>ESR1 Expression data</td></tr>
+    <tr><td>ERBB2</td>	<td>ERBB2 Expression data</td></tr>
+    <tr><td>PGR</td>	<td>PGR Expression data</td></tr>
+    <tr><td>TP53</td>	<td>TP53 Expression data</td></tr>
+    <tr><td>PIK3CA</td>	<td>PIK3CA Expression data</td></tr>
+    <tr><td>GATA3</td>	<td>GATA3 Expression data</td></tr>
+    <tr><td>FOXA1</td>	<td>FOXA1 Expression data</td></tr>
+    <tr><td>MLPH</td>	<td>MLPH Expression data</td></tr>
+  </tbody>
+</table>
+```
+:::
+
+## Credits and Acknowledgements
+
+This content was adapted from the following course materials:
+
+-   [R for Data Science book](https://r4ds.had.co.nz/index.html)
+-   [OHI Data Science Training](http://ohi-science.org/data-science-training/index.html)
+-   [Data Carpentry](https://datacarpentry.org)
+-   [WEHI tidyr coursebook](https://bookdown.org/ansellbr/WEHI_tidyR_course_book/) by Brendan R. E. Ansell
+-   Content developed by Maria Doyle.
+
+------------------------------------------------------------------------
