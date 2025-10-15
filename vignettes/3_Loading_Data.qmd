@@ -1,0 +1,602 @@
+---
+title: "Analysing Patient Data"
+teaching: 40
+exercises: 20
+questions:
+- How can I process tabular data files in Python?
+objectives:
+- Explain what a library is and what libraries are used for.
+- Import a Python library and use the functions it contains.
+- Read tabular data from a file into a program.
+- Select individual values and subsections from data.
+- Perform operations on arrays of data.
+keypoints:
+- Import a library into a program using `import libraryname`.
+- Use the `numpy` library to work with arrays in Python.
+- The expression `array.shape` gives the shape of an array.
+- Use `array[x, y]` to select a single element from a 2D array.
+- Array indices start at 0, not 1.
+- Use `low:high` to specify a `slice` that includes the indices from `low` to `high-1`.
+- Use `# some kind of explanation` to add comments to programs.
+- Use `numpy.mean(array)`, `numpy.amax(array)`, and `numpy.amin(array)` to calculate simple statistics.
+- Use `numpy.mean(array, axis=0)` or `numpy.mean(array, axis=1)` to calculate statistics across the specified axis.
+---
+
+{{< include ../_includes/header.qmd >}}
+
+Words are useful, but what's more useful are the sentences and stories we build with them.
+Similarly, while a lot of powerful, general tools are built into Python,
+specialized tools built up from these basic units live in
+[libraries](../learners/reference.md#library)
+that can be called upon when needed.
+
+## Loading data into Python
+
+To begin processing the metabric dataset, we need to load it into Python.
+We can do that using a library called
+[Pandas](https://pandas.pydata.org/docs/). It is a powerful and widely used library for data manipulation and analysis. It provides versatile data structures, such as DataFrames and Series, along with a variety of functions and methods for efficiently handling and processing structured data. In this session, we explore some functionalities of Pandas library that is useful for biological data analysis.
+To tell Python that we'd like to start using Pandas,
+we need to [import](../learners/reference.md#import) it:
+
+```{python}
+import pandas
+```
+
+Importing a library is like getting a piece of lab equipment out of a storage locker and setting it
+up on the bench. Libraries provide additional functionality to the basic Python package, much like
+a new piece of equipment adds functionality to a lab space. Just like in the lab, importing too
+many libraries can sometimes complicate and slow down your programs - so we only import what we
+need for each program.
+
+Load Pandas with `import pandas as pd`. The alias pd is commonly used to refer to the Pandas library in code.
+
+To open the help documentation for the `pandas` package, you can use the following code:
+
+
+```{python}
+#| eval: false
+import pandas as pd
+help(pd)
+```
+
+::: scrolling
+```{python}
+#| echo: false
+import pandas as pd
+help(pd)
+```
+:::
+
+This will display the help documentation for the Pandas library, providing an overview of its functions, modules, and usage.
+
+Once we've imported the library, we can ask the library to read our data file for us:
+
+``` python
+pd.read_csv("path_to_file.csv")
+
+# read a text file with values separated by spaces
+pd.read_csv(filepath_or_buffer="path_to_file.txt", delimeter=' ')
+```
+
+You can also load data directly from a URL (web link) as follows:
+
+```{python}
+# Load the Metabric dataset from the URL into a DataFrame
+pd.read_csv("https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv")
+```
+
+The expression `pd.read_csv(...)` is a
+[function call](../learners/reference.md#function-call)
+that asks Python to run the [function](../learners/reference.md#function) `read_csv` which
+belongs to the `pd` library (i.e., Pandas library).
+The dot notation in Python is used most of all as an object attribute/property specifier or for invoking its method. `object.property` will give you the object.property value,
+`object_name.method()` will invoke on object\_name method.
+
+As an example, John Smith is the John that belongs to the Smith family.
+We could use the dot notation to write his name `smith.john`,
+just as `read_csv` is a function that belongs to the `pd` library.
+
+`pd.read_csv` has two [parameters](../learners/reference.md#parameter): the name of the file or a URL
+we want to read and the [delimiter](../learners/reference.md#delimiter) that separates values
+on a line. These both need to be character strings
+(or [strings](../learners/reference.md#string) for short), so we put them in quotes.
+
+Since we haven't told it to do anything else with the function's output,
+the [notebook](../learners/reference.md#notebook) displays it.
+In this case,
+that output is the data we just loaded.
+By default,
+only a few rows and columns are shown
+(with `...` to omit elements when displaying big dataframes).
+
+Our call to `pd.read_csv` read our file
+but didn't save the data in memory.
+To do that,
+we need to assign the dataframe to a variable. In a similar manner to how we assign a single
+value to a variable, we can also assign an set of values to a variable using the same syntax.
+Let's re-run `pd.read_csv` and save the returned data:
+
+```{python}
+metabric = pd.read_csv("https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv")
+```
+
+This statement doesn't produce any output because we've assigned the output to the variable `metabric`.
+If we want to check that the data have been loaded,
+we can print the variable's value:
+
+```{python}
+print(metabric)
+```
+
+
+Now that the data are in memory,
+we can manipulate them.
+First,
+let's ask what [type](../learners/reference.md#type) of thing `metabric` refers to:
+
+```{python}
+print(type(metabric))
+```
+
+
+The output tells us that `metabric` currently refers to
+a dataframe, the functionality for which is provided by the Pandas library.
+These data correspond to the Metabric study characterized the genomic mutations and gene expression profiles for 2509 primary breast tumours. The rows are the individual patients, and the columns
+are their clinical, mutation and gene expression data.
+
+`DataFrame` is a 2-dimensional labelled data structure with columns of potentially different types. You can think of it like a spreadsheet or SQL table. It is generally the most commonly used pandas object. 
+
+The columns in a dataframe are the observed variables, and the rows are the observations.
+Pandas uses backslash \ to show wrapped lines when output is too wide to fit the screen.
+Using descriptive dataframe names helps us distinguish between multiple dataframes so we won’t accidentally overwrite a dataframe or read from the wrong one.
+
+Let's re-check our dataset.
+
+```{python}
+print(metabric)
+```
+
+By default Pandas gives each row a simple integer index (0, 1, 2, ...). In many datasets one of the columns already contains an identifier that makes a better row label — for example a patient ID. Using a meaningful index makes printed output easier to read.
+
+There are two common ways to set the DataFrame index:
+
+- Tell `read_csv()` to use a column as the index when you load the file using the `index_col` parameter.
+
+  ```{python}
+  # Option 1: set the index while reading the CSV
+  metabric_patients = pd.read_csv(
+    'https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv',
+    index_col='Patient_ID'
+  )
+  print(metabric_patients)
+  ```
+
+- Load the data first and then call the DataFrame method `set_index()` to move a column into the index.
+
+  ```{python}
+  # Option 2: read first, then set the index (useful if you need to inspect or clean the column first)
+  metabric = pd.read_csv('https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv')
+  metabric_patients = metabric.set_index('Patient_ID')
+  print(metabric_patients)
+  ```
+
+Both approaches produce a DataFrame whose rows are labelled by `Patient_ID`. Use the option that best fits your workflow.
+
+To open the help page for DataFrame, you can use the following code:
+
+```{python}
+#| eval: false
+import pandas as pd
+help(pd.DataFrame)  
+```
+
+::: scrolling
+```{python}
+#| echo: false
+import pandas as pd
+help(pd.DataFrame)  
+```
+:::
+
+
+This will display the help documentation for the `DataFrame` class in Pandas, including information on its methods, attributes, and usage examples.
+
+## Viewing Data
+
+The `DataFrame` class offers multiple methods to view and interact with data. 
+
+To get a quick look at the data you’ve loaded, you can use the `head()` method of a DataFrame. This method is especially useful when you want to preview the first few rows of a large dataset without displaying everything at once.
+
+The `head()` method is called using dot notation: you write the variable name, followed by a dot, then the method name with parentheses. For example:
+
+```{python}
+metabric_patients.head()
+```
+
+By default, `head()` returns the first 5 rows of the DataFrame. This is helpful for checking that your data loaded correctly, seeing what columns are present, and getting a sense of the values in your dataset. If you want to see a different number of rows, you can pass a number as an argument, like `metabric_patients.head(10)` to see the first 10 rows.
+
+Previewing your data with `head()` is a common first step in data analysis, allowing you to verify the structure and contents before moving on to more complex operations.
+
+To view the last few rows of your data, you can use the `tail()` method. This is useful when you want to check the end of your dataset—for example, to see if any rows are missing, or to inspect the most recent entries.
+
+Just like with `head()`, you call `tail()` using dot notation on your DataFrame variable. By default, `tail()` returns the last 5 rows, but you can specify a different number if you wish, such as `metabric_patients.tail(10)` to see the last 10 rows.
+
+Previewing the end of your data is a good way to confirm that your dataset loaded correctly and to spot any unexpected values or formatting issues at the bottom of your file.
+
+```{python}
+metabric_patients.tail()
+```
+
+To get the **shape** of the DataFrame (i.e., the number of rows and columns), use:
+
+```{python}
+metabric_patients.shape
+```
+
+The output tells us that the `metabric_patients` dataframe variable contains 1904 rows and 32 columns. 
+
+When we
+created the variable `metabric_patients` to store our data, we did not only create the dataframe; we also
+created information about the dataframe, called [members](../learners/reference.md#member) or
+attributes. This extra information describes `metabric_patients` in the same way an adjective describes a noun.
+`metabric_patients.shape` is an attribute of `metabric_patients` which describes the dimensions of `metabric_patients`. We use the same
+dotted notation for the attributes of variables that we use for the functions in libraries because
+they have the same part-and-whole relationship.
+
+Every dataframe has an index, which is used to label and identify each row. If your data file doesn’t specify row labels, Pandas will automatically create an integer index starting at 0 and counting up to the number of rows minus one. 
+
+Since we changed the index to use patient IDs, each row is now labeled by its corresponding patient identifier rather than a sequential integer. This makes it easier to select and analyze data for specific patients.
+
+You can view the index using:
+
+```{python}
+metabric_patients.index
+```
+
+To explore the structure of your data further, you can view the column names of your dataframe using the columns attribute. This will show you all the available fields in your dataset, which is helpful for exploring what information is present and for selecting columns in later analysis:
+
+```{python}
+metabric_patients.columns
+```
+
+Each column in a dataframe can hold a different type of data, such as numbers or text. The dtypes attribute shows you the data type for each column, so you can quickly see which columns contain integers, floating-point numbers, or strings. This is important for understanding how your data will be handled in calculations and for troubleshooting issues with data types:
+
+```{python}
+metabric_patients.dtypes
+```
+
+
+::: {.callout-tip}
+
+## Getting Help with DataFrames
+
+To open the help page for any method in the `DataFrame` class, use the following code.
+
+```{python}
+#| eval: false
+import pandas as pd
+help(pd.DataFrame.method_name)
+# or help(pandas.DataFrame.method_name)
+```
+
+
+For example, to open the help page for `DataFrame.head()`:
+
+```{python}
+#| eval: false
+import pandas as pd
+help(pd.DataFrame.head)  
+# or help(pandas.DataFrame.head)
+```
+
+::: scrolling
+```{python}
+#| echo: false
+import pandas as pd
+help(pd.DataFrame.head)  
+# or help(pandas.DataFrame.head)
+```
+:::
+
+Similarly, to open the help page for `DataFrame.columns`:
+
+```{python}
+#| eval: false
+import pandas as pd
+help(pd.DataFrame.columns)  
+# or help(pandas.DataFrame.columns)
+```
+
+::: scrolling
+```{python}
+#| echo: false
+import pandas as pd
+help(pd.DataFrame.columns)  
+# or help(pandas.DataFrame.columns)
+```
+:::
+
+This approach works for any other method or attribute of the `DataFrame` class.
+
+:::
+
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Try it yourself — Summaries with describe() and info()
+
+`DataFrame.describe()` and `DataFrame.info()` are two simple, fast ways to learn about the variables in a dataframe. Before running the code, open the help pages to see the available options and to understand what each method returns.
+
+1. Use `help(pd.DataFrame.describe)` and `help(pd.DataFrame.info)` (or the `?` shortcut in a Jupyter environment) to inspect the methods.
+2. Run `.describe()` and `.info()` on the dataframe you loaded.
+3. Take notes: which columns are numeric, what are the reported counts, and which columns contain missing values (if any)?
+:::
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Solution
+
+```{python}
+help(pd.DataFrame.describe)
+help(pd.DataFrame.info)
+```
+
+```{python}
+print(metabric_patients.describe())
+```
+
+When you call `.describe()` you'll see a table of summary statistics for each numeric column: count, mean, std, min, 25%, 50% (median), 75%, and max. Use these values to spot outliers (very large or small max/min), check typical scales (mean/median), and confirm there are the expected number of observations (count).
+
+```{python}
+print(metabric_patients.info())
+```
+
+`.info()` prints a compact summary: the index dtype and range, number of entries, column names, non-null counts and dtypes for each column, and memory usage. The non-null counts help spot missing data. If a column's non-null count is smaller than the number of rows, then the column has missing values.
+
+:::
+
+## Selecting Data
+
+
+
+If we want to access a single value such as the age of a particular patient or the expression level of a specific gene, we must specify both the row and the column you want. Just as we
+do in math when referring to an element of a matrix, we will need to use two indices to refer to one specific value. 
+
+To access a value at the position `[i,j]` of a DataFrame, we have two options, depending on what is the meaning of `i` in use.
+Remember that a DataFrame provides an *index* as a way to identify the rows of the table; a row, then, has a *position* inside the table as well as a *label*, which
+uniquely identifies its *entry* in the DataFrame.
+
+### Use `DataFrame.iloc[..., ...]` to select values by their (entry) position
+
+The `.iloc[]` accessor selects data by integer position, similar to standard Python indexing. This is useful when you want to select by row and column number, starting from 0.
+
+```{python}
+# Select the value in the first row and first column
+first_value = metabric_patients.iloc[0, 0]
+print('First value in DataFrame:', first_value)
+```
+
+You can also select any value by specifying its row and column index:
+
+```{python}
+# Select value at row 30, column 5
+middle_value = metabric_patients.iloc[29, 4]
+print('Value at row 30, column 5:', middle_value)
+```
+
+
+The expression `metabric_patients.iloc[29, 4]` accesses the element at row 30, column 5. While this expression may 
+not surprise you,
+`metabric_patients.iloc[0, 0]` might.
+Programming languages like Fortran, MATLAB and R start counting at 1
+because that's what human beings have done for thousands of years.
+Languages in the C family (including C++, Java, Perl, and Python) count from 0
+because it represents an offset from the first value in the array (the second
+value is offset by one index from the first value). This is closer to the way
+that computers represent arrays (if you are interested in the historical
+reasons behind counting indices from zero, you can read
+[Mike Hoye's blog post](https://exple.tive.org/blarg/2013/10/22/citation-needed/)).
+As a result,
+if we have an $\text{M} \times \text{N}$ dataframe in Python,
+its indices go from 0 to M-1 on the first axis (rows)
+and 0 to N-1 on the second (columns).
+It takes a bit of getting used to,
+but one way to remember the rule is that
+the index is how many steps we have to take from the start to get the item we want.
+
+![](images/python-zero-index-iloc.png){alt="'data' is a 3 by 3 numpy array containing row 0: \['A', 'B', 'C'\], row 1: \['D', 'E', 'F'\], androw 2: \['G', 'H', 'I'\]. Starting in the upper left hand corner, data\[0, 0\] = 'A', data\[0, 1\] = 'B',data\[0, 2\] = 'C', data\[1, 0\] = 'D', data\[1, 1\] = 'E', data\[1, 2\] = 'F', data\[2, 0\] = 'G',data\[2, 1\] = 'H', and data\[2, 2\] = 'I', in the bottom right hand corner."}
+
+For a large dataset this is not very useful, since you often don't know the row or column indices. Instead, it's better to use column names and row labels with `.loc[]`.
+
+### Use `DataFrame.loc[..., ...]` to select values by their (entry) label.
+
+The `.loc[]` accessor selects data by row and column labels (names). This is useful when your DataFrame has meaningful row labels (such as patient IDs) and column names.
+
+For example, if you want to select the value for the patient `MB-0000` in the column 'age_at_diagnosis':
+
+```{python}
+# Select the value in row with label 0 and column 'age_at_diagnosis'
+age_value = metabric_patients.loc['MB-0000', 'Age_at_diagnosis']
+print('Age at diagnosis for first patient:', age_value)
+```
+
+If your dataframe uses custom row labels (such as patient IDs), you can use those labels directly with `.loc[]`.
+
+::: {.callout-tip}
+If you get an error when using `.loc[]` or `.iloc[]`, check that you are using the correct labels or integer positions. Remember, Python counts from 0!
+:::
+
+Selecting a single value is the foundation for more advanced data selection and manipulation in Pandas. It allows you to extract specific measurements, check entries, and build up to more complex operations.
+
+### Slicing data
+
+Previously we selected a single value from our dataframe,
+but we can select whole sections as well.
+For example,
+we can select the first ten columns of values
+for the first four patients (rows) like this:
+
+```{python}
+metabric_patients.iloc[0:4, 0:10]
+```
+
+The [slice](../learners/reference.md#slice) `0:4` means, "Start at index 0 and go up to,
+but not including, index 4". Again, the up-to-but-not-including takes a bit of getting used to,
+but the rule is that the difference between the upper and lower bounds is the number of values in
+the slice.
+
+We don't have to start slices at 0:
+
+```{python}
+metabric_patients.iloc[5:10, 0:10]
+```
+
+
+We also don't have to include the upper and lower bound on the slice.  If we don't include the lower
+bound, Python uses 0 by default; if we don't include the upper, the slice runs to the end of the
+axis, and if we don't include either (i.e., if we use ':' on its own), the slice includes
+everything:
+
+```{python}
+small = metabric_patients.iloc[:3, 24:]
+print('small is:')
+print(small)
+```
+
+The above example selects rows 0 through 2 and columns 24 through to the end of the dataframe.
+
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Check Your Understanding
+
+Repeat the previous three data selection tasks, but this time use the `.loc[]` accessor instead of `.iloc[]`.
+
+:::
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Solution
+
+```{python}
+metabric_patients.loc['MB-0000':'MB-0006', "Cohort":"Tumour_stage"]
+```
+
+Notice that in this example, we have selected a range of columns by specifying their names from "Cohort" to "Tumour_stage". This allows you to select multiple columns by their labels, making your code more readable. Similarly, we have used a range of patient IDs to select multiple rows. 
+
+```{python}
+metabric_patients.loc["MB-0010":"MB-0035", "Cohort":"Tumour_stage"]
+```
+
+In the above code, we discover that **slicing using `.loc[]` is inclusive at both ends**, which differs from **slicing using `.iloc[]`**, where slicing indicates everything up to but not including the final index.
+
+```{python}
+small = metabric_patients.loc[:"MB-0005", "ERBB2":]
+print('small is:')
+print(small)
+```
+:::
+
+## Analyzing data
+
+Usually you won't just print a slice. You'll use it in a calculation. All the statistical operators that work on entire DataFrames work the same way on slices.
+
+Below are a few examples showing how to compute min and max over columns and rows, and how to find which patient or column produced that value.
+
+Let's say we want to analyze patients from cohort 1, whose IDs range from MB-0000 to MB-0906. For example, to find the maximum tumour size among these patients, we can use the following code:
+
+```{python}
+print('Maximum for Tumour_size column for cohort 1 patients:')
+print(metabric_patients.loc["MB-0000":"MB-0906", "Tumour_size"].max())
+```
+
+For the same set of patients, you can check the minimum mutation count and identify which patient has it. For example:
+
+```{python}
+print('\nMinimum for Mutation_count column for cohort 1 patients:')
+print(metabric_patients.loc["MB-0000":"MB-0906", "Mutation_count"].min())
+```
+
+Here `min` and `max` are [functions](../learners/reference.md#function). 
+
+### Selecting rows with conditions
+
+Often the clearest way to explore a dataset is to pick a question and translate it into a short filter. For example: "Which patients have more than 25 mutations?", "Which older patients have small tumours?", or "Which rows belong to Cohort 1?" In Pandas you express those questions as comparisons on columns.
+
+For example, the snippet below extracts the `Mutation_count` column and shows how to test which rows have more than 25 mutations.
+
+```{python}
+mutation_data = metabric_patients.loc[:, "Mutation_count"]
+print('Mutation data:\n', mutation_data)
+
+mask = mutation_count > 25
+print('\nWhich rows have mutations above 25?\n', mask)
+```
+
+The comparison returns a similarly-shaped dataframe of True/False values. This is often called a boolean mask because it 'masks' the rows that match the condition.
+
+You can use that mask to filter matching rows as follows:
+
+```{python}
+print(mutation_data[mask])
+```
+
+Or apply the same mask to the DataFrame to show the corresponding rows (or a specific set of columns):
+
+```{python}
+print(metabric_patients.loc[mask, 'Mutation_count':])
+```
+
+You can then run summary methods on the filtered rows, for example:
+
+```{python}
+print(metabric_patients.loc[mask, 'Mutation_count':].describe())
+```
+
+
+Next, find patients who have a tumour size smaller than 5 mm and who were diagnosed at age 50 or older.
+
+```{python}
+# mask for tumours size (in mm) < 5
+tumour_mask = metabric_patients.loc[:, 'Tumour_size'] < 5
+
+# mask for age at diagnosis >= 50
+age_mask = metabric_patients.loc[:, 'Age_at_diagnosis'] >= 50
+
+# select rows that satisfy both conditions
+selected_patients = metabric_patients.loc[tumour_mask & age_mask, :]
+selected_patients
+```
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Try it yourself 
+
+Find the maximum tumour size among patients in Cohort '1'. Write code that:
+
+1. Selects only the rows that belong to Cohort '1'.
+2. From that subset, finds the maximum value in the `Tumour_size` column.
+3. Prints the patient(s) who have that maximum tumour size (hint: use `.max()` and `.loc`).
+
+:::
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Solution
+
+```{python}
+# 1) Create mask to find patients in cohort 1
+cohort_mask = metabric_patients.loc[:, "Cohort"] == 1
+
+# 2) find the maximum tumour size
+max_size = metabric_patients.loc[cohort_mask, 'Tumour_size'].max()
+print('Maximum tumour size in Cohort 1:', max_size)
+```
+
+We first filter the DataFrame to include only rows where `Cohort == '1'` and then use `.max()` to get the maximum value from the `Tumour_size` column.
+
+This result should match the value obtained earlier when selecting cohort 1 patients by their patient ID range.
+:::
+
+
+
