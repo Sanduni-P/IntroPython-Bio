@@ -10,8 +10,16 @@ website:
         text: Home
       - text: Workshop Materials
         menu: 
-          - text: Introduction to Python 
+          - text: Getting Started with Jupyter Notebook
             href: vignettes/1_Introduction.qmd
+          - text: Python Fundamentals
+            href: vignettes/2_Intro_Python.qmd
+          - text: Loading and Viewing Patient Data
+            href: vignettes/3_Loading_Data.qmd
+          - text: Analysing Patient Data
+            href: vignettes/4_Analysing_Data.qmd
+          - text: Visualising Patient Data
+            href: vignettes/5_Visualising_Data.qmd
 
 format:
   html:
@@ -26,7 +34,6 @@ format:
     smooth-scroll: true
     code-copy: hover
     df-print: kable
-    
-jupyter: quarto-bio
+
 execute:
   cache: false

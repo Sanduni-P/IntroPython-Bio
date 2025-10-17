@@ -29,3 +29,4 @@ docs
 *.DS_Store
 
 /.quarto/
+._quarto.yml

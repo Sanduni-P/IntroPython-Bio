@@ -1,0 +1,142 @@
+---
+title: "Analysing Patient Data"
+teaching: 40
+exercises: 20
+questions:
+- How can I process tabular data files in Python?
+objectives:
+- Explain what a library is and what libraries are used for.
+- Import a Python library and use the functions it contains.
+- Read tabular data from a file into a program.
+- Select individual values and subsections from data.
+- Perform operations on arrays of data.
+keypoints:
+- Import a library into a program using `import libraryname`.
+- Use the `numpy` library to work with arrays in Python.
+- The expression `array.shape` gives the shape of an array.
+- Use `array[x, y]` to select a single element from a 2D array.
+- Array indices start at 0, not 1.
+- Use `low:high` to specify a `slice` that includes the indices from `low` to `high-1`.
+- Use `# some kind of explanation` to add comments to programs.
+- Use `numpy.mean(array)`, `numpy.amax(array)`, and `numpy.amin(array)` to calculate simple statistics.
+- Use `numpy.mean(array, axis=0)` or `numpy.mean(array, axis=1)` to calculate statistics across the specified axis.
+---
+
+{{< include ../_includes/header.qmd >}}
+
+
+
+
+```{python}
+import pandas as pd
+# Option 1: set the index while reading the CSV
+metabric_patients = pd.read_csv(
+'https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv',
+index_col='Patient_ID'
+)
+```
+
+
+## Analyzing data
+
+Usually you won't just print a slice. You'll use it in a calculation. All the statistical operators that work on entire DataFrames work the same way on slices.
+
+Below are a few examples showing how to compute min and max over columns and rows, and how to find which patient or column produced that value.
+
+Let's say we want to analyze patients from cohort 1, whose IDs range from MB-0000 to MB-0906. For example, to find the maximum tumour size among these patients, we can use the following code:
+
+```{python}
+print('Maximum for Tumour_size column for cohort 1 patients:')
+print(metabric_patients.loc["MB-0000":"MB-0906", "Tumour_size"].max())
+```
+
+For the same set of patients, you can check the minimum mutation count and identify which patient has it. For example:
+
+```{python}
+print('\nMinimum for Mutation_count column for cohort 1 patients:')
+print(metabric_patients.loc["MB-0000":"MB-0906", "Mutation_count"].min())
+```
+
+Here `min` and `max` are [functions](../learners/reference.md#function). 
+
+### Selecting rows with conditions
+
+Often the clearest way to explore a dataset is to pick a question and translate it into a short filter. For example: "Which patients have more than 25 mutations?", "Which older patients have small tumours?", or "Which rows belong to Cohort 1?" In Pandas you express those questions as comparisons on columns.
+
+For example, the snippet below extracts the `Mutation_count` column and shows how to test which rows have more than 25 mutations.
+
+```{python}
+mutation_data = metabric_patients.loc[:, "Mutation_count"]
+print('Mutation data:\n', mutation_data)
+
+mask = mutation_data > 25
+print('\nWhich rows have mutations above 25?\n', mask)
+```
+
+The comparison returns a similarly-shaped dataframe of True/False values. This is often called a boolean mask because it 'masks' the rows that match the condition.
+
+You can use that mask to filter matching rows as follows:
+
+```{python}
+print(mutation_data[mask])
+```
+
+Or apply the same mask to the DataFrame to show the corresponding rows (or a specific set of columns):
+
+```{python}
+print(metabric_patients.loc[mask, 'Mutation_count':])
+```
+
+You can then run summary methods on the filtered rows, for example:
+
+```{python}
+print(metabric_patients.loc[mask, 'Mutation_count':].describe())
+```
+
+
+Next, find patients who have a tumour size smaller than 5 mm and who were diagnosed at age 50 or older.
+
+```{python}
+# mask for tumours size (in mm) < 5
+tumour_mask = metabric_patients.loc[:, 'Tumour_size'] < 5
+
+# mask for age at diagnosis >= 50
+age_mask = metabric_patients.loc[:, 'Age_at_diagnosis'] >= 50
+
+# select rows that satisfy both conditions
+selected_patients = metabric_patients.loc[tumour_mask & age_mask, :]
+selected_patients
+```
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Try it yourself 
+
+Find the maximum tumour size among patients in Cohort '1'. Write code that:
+
+1. Selects only the rows that belong to Cohort '1'.
+2. From that subset, finds the maximum value in the `Tumour_size` column.
+3. Prints the patient(s) who have that maximum tumour size (hint: use `.max()` and `.loc`).
+
+:::
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Solution
+
+```{python}
+# 1) Create mask to find patients in cohort 1
+cohort_mask = metabric_patients.loc[:, "Cohort"] == 1
+
+# 2) find the maximum tumour size
+max_size = metabric_patients.loc[cohort_mask, 'Tumour_size'].max()
+print('Maximum tumour size in Cohort 1:', max_size)
+```
+
+We first filter the DataFrame to include only rows where `Cohort == '1'` and then use `.max()` to get the maximum value from the `Tumour_size` column.
+
+This result should match the value obtained earlier when selecting cohort 1 patients by their patient ID range.
+:::
+
+
+

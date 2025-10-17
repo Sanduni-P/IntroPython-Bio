@@ -1,0 +1,651 @@
+---
+title: "Visualising Patient Data"
+teaching: 60
+exercises: 30
+questions:
+ - How do I make basic plots in Python?
+ - How do I choose the right plot for my data?
+ - How do I make plots beautiful and clear?
+ - How do I share them?
+objectives:
+ - Load and inspect the dataset to pick suitable plots.
+ - Create scatter, bar, box, and line plots with Matplotlib.
+ - Add simple customisation (labels, legends, colours, grids) for readability.
+ - Save figures to common formats for reports and slides.
+keypoints:
+ - Matplotlib plus Pandas cover most everyday plotting tasks.
+ - Choose plots based on whether your data is numeric or categorical.
+ - Small tweaks (labels, colours, grids, limits) make plots much easier to read.
+ - Save high‑quality figures and explore more examples in the Matplotlib docs.
+---
+
+{{< include ../_includes/header.qmd >}}
+
+## Visualising Data
+
+Words tell a story; figures let us see it. In the same way that Pandas helps us wrangle tables,
+Matplotlib helps us turn numbers into pictures so that patterns and outliers are easier to spot.
+
+Matplotlib is the most widely used plotting library in Python. It provides a flexible framework for creating a wide variety of static, animated, and interactive visualisations, from simple line plots and scatter plots to complex heatmaps and 3D charts. Matplotlib is highly customizable, allowing you to control every aspect of your figures, including colors, labels, legends, and more. 
+
+Visualisation deserves an entire lecture of its own, but we can explore a few features of Python’s [Matplotlib](https://matplotlib.org/) library here. 
+
+First, we will import the `pyplot` module from matplotlib.
+
+```{python}
+import matplotlib.pyplot as plt
+```
+
+## Loading data for visualisation
+
+We’ll use the same Metabric patient data we loaded earlier. Let’s load it and set the
+patient ID as the index so rows are labelled meaningfully. If you already have `metabric_patients`
+in memory from a previous episode, you can reuse it; otherwise, run the following to (re)load it:
+
+```{python}
+import pandas as pd
+
+metabric_patients = pd.read_csv(
+		"https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv",
+		index_col="Patient_ID"
+)
+```
+
+Before plotting, it’s useful to check which variables are numeric and which are categorical, since
+that affects the choice of plot:
+
+```{python}
+metabric_patients.dtypes
+```
+
+Common numeric columns in this dataset include ages and expression levels; common categorical
+columns include receptor status and subtype labels. We’ll use these to drive our visualisations in
+the next steps.
+
+## Your First Plot
+
+Let’s explore the relationship between two important genes in breast cancer: the transcription factor GATA3 and the estrogen receptor ESR1. We’ll plot GATA3 expression on the x-axis and ESR1 expression on the y-axis.
+
+To get started, we’ll extract these columns from the `metabric_patients` DataFrame and assign them to variables for easy plotting.
+
+```{python}
+gata3 = metabric_patients.loc[:, "GATA3"]
+esr1 = metabric_patients.loc[:, "ESR1"]
+```
+
+
+::: {.callout-tip}
+
+### Column names are case-sensitive
+
+If you see a `KeyError: 'GATA3'` (or similar), the exact column name may differ. Check available columns:
+
+```{python}
+list(metabric_patients.columns)
+```
+
+If the dataset uses a different case (e.g., `gata3`), adjust the code accordingly.
+:::
+
+
+Next, we are going to create our first scatter plot with `plt.scatter`.
+
+```{python}
+plt.scatter(gata3, esr1)
+```
+
+A scatter plot visualises the relationship between two numeric variables by placing one on the x-axis and the other on the y-axis. Each point corresponds to a single patient. If the points show an upward trend, it suggests the variables increase together; a downward trend indicates that as one increases, the other tends to decrease.
+
+::: {.callout-tip}
+
+## Display All Open Figures
+In our Jupyter Notebook example, running the cell should generate the figure directly below the code. The figure is also included in the Notebook document for future viewing. However, other Python environments like an interactive Python session started from a terminal or a Python script executed via the command line require an additional command to display the figure.
+
+Instruct `matplotlib` to show a figure:
+
+```{python}
+#| eval: false
+plt.show()
+```
+
+This command can also be used within a Notebook - for instance, to display multiple figures if several are created by a single cell.
+:::
+
+## Customising Plots
+
+Matplotlib gives you fine control over the appearance of your plots, making it possible to create figures suitable for presentations and publications. This section explains some useful features to improve your scatter plots.
+
+### Add Axis Labels
+
+Our scatter plot is informative, but it’s not yet self-explanatory. To make it clear which gene is represented on each axis, let’s add axis labels and a descriptive title.
+
+```{python}
+plt.scatter(gata3, esr1)
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+```
+
+Labels and a title turn a picture into a figure that others (and future you) can understand without
+extra context. Each command modifies the current figure and axes created by `plt.scatter(...)`. Here, `plt.xlabel(...)` and `plt.ylabel(...)` sets the text under the x‑axis and the text to the left of the y‑axis. You can add a descriptive title inside the plot area with `plt.title(...)`.
+
+You can also control the look of these texts, for example the font size:
+
+```{python}
+plt.scatter(gata3, esr1)
+plt.xlabel("GATA3 expression", fontsize=11)
+plt.ylabel("ESR1 expression", fontsize=11)
+plt.title("GATA3 vs ESR1 (Metabric patients)", fontsize=12)
+```
+
+
+### Change Point Shape 
+
+You can change the shape of the points using the `marker` argument in `plt.scatter`. Common marker shapes include:
+
+- `'o'` : circle (default)
+- `'s'` : square
+- `'^'` : triangle up
+- `'v'` : triangle down
+- `'D'` : diamond
+- `'x'` : x
+- `'+'` : plus
+
+For example, to use x:
+
+```{python}
+plt.scatter(gata3, esr1, marker='x')
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Squares)")
+```
+
+Try different marker styles to see which best fits your data and audience.
+
+
+### Adding Color Size and Transparency
+
+The above plot can be made clearer by adjusting the point color, size and transparency. This helps reduce overplotting and makes patterns easier to see.
+
+```{python}
+plt.scatter(gata3, esr1, alpha=0.6, s=14, color="steelblue")
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+```
+
+Here, `alpha` controls transparency from 0 (fully transparent) to 1 (fully opaque). Values around 0.4–0.7 help with dense clouds of points (reduces overplotting). `s` argument sets marker size in points squared (pt²). Typical values for scatter plots range from 8–30; use smaller values for many points, larger values for sparse data or when exporting small figures.
+
+Argument `color` (or `c`) sets the marker face colour. Matplotlib offers a wide range of options for customizing the color of your plot markers. You can specify colors using named strings (like `"red"` or `"steelblue"`), hexadecimal codes (such as `"#1f77b4"`), or even RGB tuples. For a full list of available color names and formats, see the [Matplotlib color documentation](https://matplotlib.org/stable/users/explain/colors/colors.html#colors-def). Experimenting with different colors can help highlight important patterns or make your plots more visually appealing.
+
+You can also add a subtle outline to each point to improve separation where points overlap, especially when markers are light on a light background:
+
+```{python}
+plt.scatter(
+	gata3, esr1,
+	s=16,
+	alpha=0.6,
+	color="steelblue",
+	edgecolor="blue",   # thin white outline
+	linewidths=0.3      # width of the outline
+)
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+```
+
+#### Colour by a third variable
+
+If you have another numeric column (for example, ESR1 itself), you can map values to colour with a colormap:
+
+```{python}
+# Example: colour points by ESR1 value using the 'viridis' colormap
+plt.scatter(gata3, esr1, c=esr1, cmap="viridis", s=14, alpha=0.6)
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 coloured by ESR1")
+plt.colorbar(label="ESR1")  # add a colourbar legend
+```
+
+We pass the `esr1` column data to `c=`. Matplotlib maps low values to one end of the colormap and high values to the other end, then adds a colourbar as a key. Then, we specified the colour map to be used using `cmap` argument. Use a sequential colormap (e.g., `viridis`, `plasma`, `inferno`) for magnitudes, and a diverging colormap (e.g., `coolwarm`, `RdBu_r`) for variables with a meaningful center (such as zero or a reference value), like log2 fold-change or differences from a baseline.
+
+::: {.callout-warning collapse="true" icon="false"}
+
+## Advanced: Adding Colour for Categorical Variables
+
+When the third variable is categorical (e.g., ER status or subtype), create one scatter call per group and add a legend. This ensures a clear legend rather than a colourbar.
+
+```{python}
+# Create a subset with all required 3 columns
+data3 = metabric_patients.loc[:, ["GATA3", "ESR1", "ER_status"]]
+
+# Define colour palette for the two categorical types
+palette = {
+    "Positive": "tab:orange",  # ER positive patients
+    "Negative": "tab:blue"     # ER negative patients
+}
+
+# Group based on ER status and plot for each ER group
+for label, df in data3.groupby("ER_status"):
+    # Plot each group with its assigned color and label
+    plt.scatter(
+        df.loc[:, "GATA3"], 
+        df.loc[:, "ESR1"], 
+        s=14, 
+        alpha=0.6,
+        color=palette.get(label, "grey"),  # fallback to grey if label not in palette
+        label=label
+    )
+
+# Add axis labels and title
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 by ER_status")
+
+# Add legend to distinguish ER status groups
+plt.legend(title="ER_status")
+
+# Adjust layout for better appearance
+plt.tight_layout()
+```
+
+:::
+
+
+### Control Axis Limits
+
+By default, Matplotlib “autoscales” to fit your data. Manually setting limits is helpful when you:
+
+- Compare multiple figures or panels and want the same scale on each.
+- Focus on a region of interest (e.g., crop away extreme outliers for clarity).
+- Make slopes and relative differences easier to interpret across plots.
+
+You can also set limits based on the data range with a small padding:
+
+```{python}
+plt.scatter(gata3, esr1, alpha=0.6, s=14, color="steelblue")
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+plt.xlim(0, 20)
+plt.ylim(0, 20)
+```
+
+If your variables are on the same scale and you want geometry to be visually comparable, set an equal aspect ratio:
+
+```{python}
+plt.scatter(gata3, esr1, alpha=0.6, s=14, color="steelblue")
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+plt.axis('equal')  # 1 unit on x equals 1 unit on y
+```
+
+For data spanning orders of magnitude, log scales can reveal structure:
+
+```{python}
+plt.scatter(gata3, esr1, alpha=0.6, s=14, color="steelblue")
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+plt.xscale('log')
+plt.yscale('log')
+```
+
+Note: log scales require strictly positive values. Filter or shift data if needed before applying.
+
+### Add Grid Lines
+
+Grid lines make it easier to read values across from the axes, especially in dense scatter plots and categorical charts. You can toggle and style them with `plt.grid(...)`.
+
+Basic usage on our scatter plot:
+
+```{python}
+plt.scatter(gata3, esr1, alpha=0.6, s=14, color="steelblue")
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 with grid")
+
+# Turn on light dashed grid lines behind the points
+plt.grid(True, which="major", axis="both", linestyle="--", linewidth=0.5, alpha=0.4)
+plt.gca().set_axisbelow(True)  # ensure grid is drawn beneath markers
+```
+
+Tips and variants:
+
+- Only y-axis grid (great for bar/box plots):
+
+```{python}
+plt.grid(True, axis="y", linestyle="--", alpha=0.5)
+```
+
+- Add minor ticks and a faint minor grid:
+
+```{python}
+plt.minorticks_on()
+plt.grid(True, which="minor", linestyle=":", linewidth=0.4, alpha=0.2)
+```
+
+Best practice: keep grid lines subtle (low alpha, thin line, neutral colour) so they guide the eye without competing with the data. Some styles like `'seaborn-v0_8-whitegrid'` enable a tasteful grid automatically.
+
+### Adding Style
+
+Styles control the overall appearance of the plot, including colours, gridlines, fonts, background color and text styles. Matplotlib supports several style options and you can also create custom themes to match your preferences or the requirements of your publication. 
+
+```{python}
+plt.style.use('seaborn-v0_8-whitegrid')
+plt.scatter(gata3, esr1, alpha=0.6, s=14, color="steelblue")
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+```
+
+Other popular styles: `'ggplot'`, `'classic'`, `'bmh'`, `'fivethirtyeight'`. See all available styles:
+
+```{python}
+print(plt.style.available)
+```
+
+You can apply a style globally with `plt.style.use(...)`, or only for a few lines using a context
+manager so the style doesn’t “leak” into later figures:
+
+```{python}
+with plt.style.context('ggplot'):
+    plt.scatter(gata3, esr1, s=14, alpha=0.6)
+    plt.xlabel("GATA3 expression")
+    plt.ylabel("ESR1 expression")
+    plt.title("GATA3 vs ESR1 (Metabric patients)")
+```
+
+To go back to Matplotlib defaults after changing styles globally, run:
+
+```{python}
+plt.style.use('default')
+```
+
+Experiment with these features to make your plots clear, attractive, and ready for publication. For more options, see the [Matplotlib gallery](https://matplotlib.org/stable/gallery/index.html).
+
+## Save Figures to File
+
+Saving your figure creates a file you can share or include in reports and manuscripts. 
+
+To save your plot as a PNG or PDF for publication:
+
+```{python}
+#| eval: false
+plt.savefig("scatter_gata3_esr1.png", dpi=300)
+```
+
+
+The code above uses `plt.savefig()` from Matplotlib to save the current figure to a file named `"scatter_gata3_esr1.png"` with a resolution of 300 dots per inch (dpi), which is suitable for high-quality publications. You can change the file extension to save in different formats. For example, to save the same figure as a PDF, use:
+
+```{python}
+#| eval: false
+plt.savefig("scatter_gata3_esr1.pdf")
+```
+
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Try It Yourself
+
+Create a scatter plot of ESR1 expression vs Nottingham prognostic index as shown below and save is as a PDF. 
+
+![](images/scatter_esr1_vs_npi.png)
+
+*Hint: Use the "inferno" colormap, set marker size to 25, and transparency (alpha) to 0.6. Colour points by Nottingham prognostic index.*
+
+:::
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Solution
+
+```{python}
+#| eval: false
+esr1 = metabric_patients.loc[:, "ESR1"]
+npi = metabric_patients.loc[:, "Nottingham_prognostic_index"]
+
+with plt.style.context('ggplot'):
+    plt.scatter(npi, esr1, c=esr1, cmap="inferno", s=25, alpha=0.6)
+    plt.xlabel("Nottingham prognostic index")
+    plt.ylabel("ESR1 expression")
+    plt.title("ESR1 expression vs NPI")
+    plt.savefig("scatter_esr1_vs_npi.png")
+```
+
+:::
+
+## Bar Charts
+
+Bar charts are useful for comparing values across categories. 
+
+The metabric study redefined how we think about breast cancer by identifying and characterizing several new subtypes, referred to as integrative clusters. Let’s create a bar chart of the number of patients whose cancers fall within each subtype in the metabric cohort.
+
+Start with a simplest plot: compute counts and draw bars.
+
+```{python}
+# Step 1: select the categorical column
+int_clust = metabric_patients.loc[:, "Integrative_cluster"]
+
+# Step 2: count how many patients fall into each category
+counts = int_clust.value_counts()
+
+# Step 3: draw a basic bar chart (no labels yet)
+plt.bar(counts.index, counts.values)
+```
+
+We used `value_counts()` to get the number of rows in each category. Then, we passed category names to the x‑axis and counts to the bar heights.
+
+We can then make the figure self-explanatory by adding axis labels, a title, and readable tick labels.
+
+```{python}
+plt.bar(counts.index, counts.values)
+plt.xlabel("Integrative cluster")
+plt.ylabel("Number of patients")
+plt.title("Patient counts by integrative cluster")
+plt.xticks(rotation=30, ha='right')  # rotate long labels so they don’t overlap
+```
+
+By default, `value_counts()` orders bars by frequency (highest first). You may prefer alphabetical
+order (easier to look up a category) or a custom, biologically meaningful order.
+
+```{python}
+counts_alpha = counts.sort_index()
+plt.bar(counts_alpha.index, counts_alpha.values)
+plt.xlabel("Integrative cluster")
+plt.ylabel("Number of patients")
+plt.title("Patient counts by cluster (alphabetical)")
+plt.xticks(rotation=30, ha='right')
+plt.tight_layout()
+```
+
+Custom order (only the labels present will be plotted, in this order):
+
+```{python}
+desired = [
+    "1", "2", "3", "4ER-", "4ER+", "5", "6", "7", "8", "9", "10"
+]
+
+# Keep only categories that exist in our data, and reorder
+present = [lab for lab in desired if lab in counts.index]
+counts_custom = counts.reindex(present)
+
+plt.bar(counts_custom.index, counts_custom.values)
+plt.xlabel("Integrative cluster")
+plt.ylabel("Number of patients")
+plt.title("Patient counts by cluster (custom order)")
+plt.xticks(rotation=30, ha='right')
+plt.tight_layout()
+```
+
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Try it yourself — Colourful bars with outlines
+
+Create a bar chart of patient counts by cancer type, then add a fill colour and a contrasting edge colour to make the bars stand out.
+
+*Hints:*
+
+- Use the `color=` keyword to set the bar fill.
+- Use `edgecolor=` to set the bar borders and `linewidth=` to control border thickness.
+- Start from `metabric_patients.loc[:, "Cancer_type"]` to compute counts.
+- Rotate x‑tick labels (e.g., `plt.xticks(rotation=15, ha='right')`) for long category names.
+- Use `plt.tight_layout()` to automatically adjust subplot parameters so that the plot fits nicely within the figure area.
+:::
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Solution
+
+```{python}
+cancer_type = metabric_patients.loc[:, "Cancer_type"]
+counts = cancer_type.value_counts()
+
+# Order alphabetically for readability
+counts_alpha = counts.sort_index()
+
+# Single fill colour for all bars, with a dark edge and thin outline
+plt.bar(
+    counts_alpha.index,
+    counts_alpha.values,
+    color="skyblue",      # bar fill
+    edgecolor="darkblue", # bar border
+    linewidth=0.8         # border thickness
+)
+plt.xlabel("Cancer type")
+plt.ylabel("Number of patients")
+plt.title("Patient counts by cancer type")
+plt.xticks(rotation=15, ha='right', fontsize=8)
+plt.grid(axis="y", linestyle=":")
+plt.tight_layout()
+```
+
+:::
+
+## Box Plot
+
+Box plots (or *box & whisker plots*) are a particular favourite seen in many seminars and papers. Box plots summarize the distribution of a set of values by displaying the minimum and maximum values, the median (i.e. middle-ranked value), and the range of the middle 50% of values (inter-quartile range). The whisker line extending above and below the IQR box define Q3 + (1.5 x IQR), and Q1 - (1.5 x IQR) respectively.
+
+![](https://miro.medium.com/max/18000/1*2c21SkzJMf3frPXPAR_gZA.png) 
+
+Box plots are great for comparing distributions across categories. Here we’ll compare GATA3 expression between ER‑negative and ER‑positive patients.
+
+```{python}
+# Select all ER status positive patients
+mask_pos = metabric_patients.loc[:, "ER_status"] == "Positive"
+pos = metabric_patients.loc[mask_pos, "GATA3"]
+
+# Select all ER status negative patients
+mask_neg = metabric_patients.loc[:, "ER_status"] == "Negative"
+neg = metabric_patients.loc[mask_neg, "GATA3"]
+
+plt.boxplot([neg, pos], labels=["Negative", "Positive"]) 
+plt.xlabel("ER status")
+plt.ylabel("GATA3 expression")
+plt.title("GATA3 by ER status")
+plt.tight_layout()
+```
+
+Here, the first argument to `plt.boxplot(...)` is a list of arrays or sequences, each containing the values for one group (e.g., ER-negative and ER-positive patients). The `labels` argument assigns a label to each group for the x-axis.
+
+A list is a way to store multiple items together in a single variable. In Python, you create a list by placing items inside square brackets, like this: `[item1, item2, item3]`. For example, `[1, 2, 3] `is a list containing the numbers 1, 2, and 3.
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Try it yourself — Box plot by 3‑gene classifier
+
+Create a box plot of GATA3 expression across categories of the 3‑gene classifier. Required data is already given for you.
+
+```{python}
+# Select relevant columns and drop rows with missing values
+subset = metabric_patients.loc[:, ["3-gene_classifier", "GATA3"]].dropna()
+
+# Get sorted list of unique classifier categories for x-axis labels
+labels = sorted(subset.loc[:, "3-gene_classifier"].unique())
+
+# For each classifier category, extract GATA3 expression values as a group
+groups = [subset.loc[subset["3-gene_classifier"] == lab, "GATA3"].values for lab in labels]
+```
+
+
+:::
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Solution
+
+```{python}
+plt.boxplot(groups, labels=labels)
+plt.xlabel("3-gene_classifier")
+plt.ylabel("GATA3 expression")
+plt.title(f"GATA3 by 3-gene_classifier")
+plt.xticks(rotation=15, ha='right')
+plt.tight_layout()
+```
+
+:::
+
+## Line Plot
+
+Line plots connect points in order and are ideal for trends over a continuous or ordered x‑axis. Here we’ll use Age at diagnosis. 
+
+```{python}
+# Select and sort ages (ascending) and plot cumulative count vs age
+ages = metabric_patients.loc[:, "Age_at_diagnosis"]
+ages_sorted = ages.sort_values().reset_index(drop=True)
+
+# x = age, y = cumulative count (patient index after sorting)
+plt.plot(ages_sorted.values, range(1, len(ages_sorted) + 1))
+plt.xlabel("Age at diagnosis")
+plt.ylabel("Patient index (sorted by age)")
+plt.title("Age at diagnosis (sorted)")
+plt.tight_layout()
+```
+
+Here, `plt.plot(...)` command plots a cumulative distribution or a simple line plot. `range(1, len(ages_sorted) + 1)` creates a sequence of integers starting at 1 up to the number of ages. It’s often used to represent the rank or position of each age in the sorted list. It plots each age (on the x-axis) against its rank (on the y-axis). This is useful for visualizing the distribution of ages, such as a cumulative frequency plot.
+
+If `ages_sorted` isn’t sorted, the plot won’t show a proper cumulative distribution. If you want the y-axis to show percentages, you’d need to normalize the ranks.
+
+To add colour and style:
+
+```{python}
+plt.plot(ages_sorted.values, range(1, len(ages_sorted) + 1), color="green", linewidth=1.8, linestyle="-")
+plt.xlabel("Age at diagnosis")
+plt.ylabel("Patient index (sorted by age)")
+plt.title("Age at diagnosis (styled line)")
+plt.grid(linestyle=":", alpha=0.4)
+```
+
+
+
+We covered fundamental plots you’ll use often, but Matplotlib supports many more: histograms, kernel‑density curves, violin/strip plots, heatmaps, contour maps, time‑series with date axes, 3D plots, annotations, and much more. The best way to learn is to browse examples and adapt them to your data.
+
+::: {.callout-tip collapse="true" icon="false"}
+## Helpful Resources:
+
+- Matplotlib documentation home: <https://matplotlib.org/stable/>
+- Gallery of examples (copy‑paste friendly): <https://matplotlib.org/stable/gallery/index.html>
+- Plot types overview: <https://matplotlib.org/stable/plot_types/index.html>
+- Tutorials (getting started to advanced): <https://matplotlib.org/stable/tutorials/index.html>
+- Pyplot tutorial: <https://matplotlib.org/stable/tutorials/introductory/pyplot.html>
+- Cheatsheets (quick reference): <https://matplotlib.org/cheatsheets/>
+- Colormap reference: <https://matplotlib.org/stable/users/explain/colors/colormaps.html>
+- Style sheets reference: <https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html>
+
+:::
+
+With these tools, you can iterate from a quick exploratory figure to a polished, publication‑ready visualisation that communicates your story clearly.
+
+{{< include ../_includes/footer.qmd >}}
+---
+<table style="width: 100%; border: none;">
+  <tr>
+    <td style="text-align: left; width: 50%;">
+        [← Previous](../vignettes/4_Analysing_Data.qmd)
+    </td>
+    <td style="text-align: right; width: 50%;">
+    </td>
+  </tr>
+</table>
