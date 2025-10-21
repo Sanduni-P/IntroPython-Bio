@@ -1,6 +1,6 @@
 ---
 title: "Python Fundamentals"
-teaching: 20
+teaching: 15
 exercises: 10
 questions:
 - "What basic data types can I work with in Python?"
@@ -34,8 +34,8 @@ Any Python interpreter can be used as a calculator:
 
 This is great but not very interesting.
 To do anything useful with data, we need to assign its value to a *variable*.
-In Python, we can [assign](../learners/reference.md#assign) a value to a
-[variable](../learners/reference.md#variable), using the equals sign `=`.
+In Python, we can [assign](reference.md#assign) a value to a
+[variable](reference.md#variable), using the equals sign `=`.
 For example, we can track the weight of a patient who weighs 60 kilograms by
 assigning the value `60` to a variable `weight_kg`:
 
@@ -50,7 +50,7 @@ In Python, variable names:
 
 - can include letters, digits, and underscores
 - cannot start with a digit
-- are [case sensitive](../learners/reference.md#case-sensitive).
+- are [case sensitive](reference.md#case-sensitive).
 
 This means that, for example:
 
@@ -99,7 +99,7 @@ patient_id = 'MB-' + patient_id
 ## Built-in Python Functions
 
 To carry out common tasks with data and variables in Python,
-the language provides us with several built-in [functions](../learners/reference.md#function).
+the language provides us with several built-in [functions](reference.md#function).
 To display information to the screen, we use the `print` function:
 
 ```{python}
@@ -123,7 +123,7 @@ print(patient_id, 'weight in kilograms:', weight_kg)
 
 
 We can also call a function inside of another
-[function call](../learners/reference.md#function-call).
+[function call](reference.md#function-call).
 For example, Python has a built-in function called `type` that tells you a value's data type:
 
 ```{python}
@@ -229,7 +229,7 @@ print('weight in kilograms:', weight_kg, 'and in pounds:', weight_lb)
 
 
 Everything in a line of code following the '#' symbol is a
-[comment](../learners/reference.md#comment) that is ignored by Python.
+[comment](reference.md#comment) that is ignored by Python.
 Comments allow programmers to leave explanatory notes for other
 programmers or their future selves.
 
@@ -357,9 +357,11 @@ print(type(distance))
 {{< include ../_includes/footer.qmd >}}
 
 ---
+
+
 <table style="width: 100%; border: none;">
   <tr>
-    <td style="text-align: right; width: 50%;">
+    <td style="text-align: left; width: 50%;">
         [← Previous](../vignettes/1_Introduction.qmd)
     </td>
     <td style="text-align: right; width: 50%;">
@@ -367,6 +369,4 @@ print(type(distance))
     </td>
   </tr>
 </table>
-    </td>
-  </tr>
-</table>
+   

@@ -11,15 +11,11 @@ objectives:
 - Select individual values and subsections from data.
 - Perform operations on arrays of data.
 keypoints:
-- Import a library into a program using `import libraryname`.
-- Use the `numpy` library to work with arrays in Python.
-- The expression `array.shape` gives the shape of an array.
-- Use `array[x, y]` to select a single element from a 2D array.
-- Array indices start at 0, not 1.
-- Use `low:high` to specify a `slice` that includes the indices from `low` to `high-1`.
-- Use `# some kind of explanation` to add comments to programs.
-- Use `numpy.mean(array)`, `numpy.amax(array)`, and `numpy.amin(array)` to calculate simple statistics.
-- Use `numpy.mean(array, axis=0)` or `numpy.mean(array, axis=1)` to calculate statistics across the specified axis.
+- 'Describe data with pandas: `mean`, `median`, `std`, `var`, `sum`, `count`, `value_counts`.'
+- Use `numeric_only=True` for DataFrame-wide reductions and `axis=` to switch between column-wise (`axis=0`) and row-wise (`axis=1`).
+- Combine boolean masks with summaries to analyze filtered subsets.
+- Handle missing data with `dropna()`; reorder results with `sort_index()`/`reindex()` and `sort_values()`/`reset_index()`.
+- Explore categories with `unique()` and summarize groups with `groupby()`.
 ---
 
 {{< include ../_includes/header.qmd >}}
@@ -44,7 +40,8 @@ Before jumping into complex models, we start by describing the data. Descriptive
 
 The pandas library provides a wide range of statistical functions and methods to compute summary statistics for your data. Below provides some of the key statistical measures you can compute using this library. 
 
-#### 1) Mean 
+
+### Mean 
 
 Mean (*average*) of a single column (one variable):
 
@@ -86,7 +83,7 @@ This treats each row as a small collection of values and averages across columns
 Most reducers (`sum`, `mean`, `min`, `max`, etc.) accept `axis=` and follow the same pattern.
 :::
 
-#### 2) Median
+### Median
 
 The median (*robust "typical" value*) is the middle value when data are sorted. It is not affected by extreme values (outliers) and is often used to describe the central tendency of data. 
 
@@ -98,6 +95,7 @@ Visualising mean vs median:
 
 ```{python}
 #| echo: false
+#| fig-align: center
 import matplotlib.pyplot as plt
 
 # choose a numeric column to visualise
@@ -108,7 +106,7 @@ plt.hist(vals, bins=30, color='#8ecae6', edgecolor='white')
 plt.axvline(vals.mean(), color='#d62828', linestyle='--', linewidth=2, label='Mean')
 plt.axvline(vals.median(), color='#f77f00', linestyle='-', linewidth=2, label='Median')
 plt.title('Tumour size distribution')
-plt.xlabel('Tumour size')
+plt.xlabel('Tumour size (mm)')
 plt.ylabel('Count')
 plt.legend()
 plt.tight_layout()
@@ -116,7 +114,7 @@ plt.tight_layout()
 
 The mean pulls toward extreme values more than the median. In skewed distributions, the two lines will sit apart.
 
-####  3) Standard Deviation 
+### Standard Deviation 
 
 The standard deviation (*spread around the mean*) measures the amount of variation or dispersion in a dataset. A lower standard deviation indicates that data points are close to the mean, while a higher standard deviation indicates greater variability. 
 
@@ -124,7 +122,7 @@ The standard deviation (*spread around the mean*) measures the amount of variati
 metabric_patients.std(numeric_only = True)
 ```
 
-#### 4) Variance 
+### Variance 
 
 Variance (*spread in squared units*) is the square of the standard deviation. It quantifies how much individual data points deviate from the mean. It’s useful mathematically, but note its units are squared (e.g., cm² if the original variable is in cm). 
 
@@ -132,7 +130,7 @@ Variance (*spread in squared units*) is the square of the standard deviation. It
 metabric_patients.var(numeric_only = True)
 ```
 
-#### 7) Sum 
+### Sum 
 
 Use `.sum()` to add up values.
 
@@ -162,7 +160,7 @@ What the output shows
 - Single-column sum: a single number.
 - Row-wise sum (`axis=1`): a Series indexed by row labels (one total per patient).
 
-#### 8) Count 
+### Count 
 
 Use `.count()` to count non-missing values. This is helpful to see how complete each column is.
 
@@ -181,33 +179,6 @@ metabric_patients.loc[:, 'Survival_status'].count()
 ```
 
 This returns a single number - non-missing entries in the Survival_status column.
-
-#### 9) Frequency of Values 
-
-Use `value_counts()` to see how often values appear.
-
-```{python}
-metabric_patients.value_counts()
-```
-
-Each index is a unique combination of column values across the dataframe. The value is how many rows match that exact combination. Scroll horizontally to check the value column. Since there are no duplicate rows, the value will always be 1 in this example. 
-
-For a specific column (e.g., Survival_status):
-
-```{python}
-metabric_patients.loc[:, '3-gene_classifier'].value_counts()
-```
-
-For a single column, this returns an index with unique values in the column (i.e., category names) and the values are their counts. In the above example, there are four categories. 
-
-By default, missing values (represented as `NaN`, which stands for "Not a Number") are excluded from the result. This means that only rows with actual, non-missing values are counted in the frequency table. If you want to include missing values as their own category in the output, you can pass the argument `dropna=False` to `value_counts()`. This will show how many times `NaN` appears in the column, which is useful for quickly assessing the amount of missing data in a categorical variable.
-
-For example:
-
-```{python}
-metabric_patients.loc[:, '3-gene_classifier'].value_counts(dropna=False)
-```
-
 
 Here is a quick reference summary table of common useful functions.
 
@@ -302,106 +273,156 @@ Here is a quick reference summary table of common useful functions.
 
 In summary, descriptive statistics provide a powerful first look at your data, helping you understand its central tendencies, variability, and completeness. By using functions like `mean`, `median`, `std`, and `value_counts`, you can quickly identify patterns, spot anomalies, and prepare your dataset for deeper analysis. Mastering these basic tools in pandas will make your data exploration more efficient and insightful.
 
-## Analyzing Data
-
-Usually you won't just print a slice. You'll use it in a calculation. All the statistical operators that work on entire DataFrames work the same way on slices.
+Recall from the previous episode that you can select specific rows using boolean conditions (masks). See the section on [boolean masks](3_Loading_Data.qmd#boolean-masks). We’ll apply the above statistics to filtered subsets. All the statistical operators that work on entire DataFrames work the same way on slices.
 
 Below are a few examples showing how to compute min and max over columns and rows, and how to find which patient or column produced that value.
 
 Let's say we want to analyze patients from cohort 1, whose IDs range from MB-0000 to MB-0906. For example, to find the maximum tumour size among these patients, we can use the following code:
 
 ```{python}
+cohort_mask = metabric_patients.loc[:, "Cohort"] == 1
+
 print('Maximum for Tumour_size column for cohort 1 patients:')
-print(metabric_patients.loc["MB-0000":"MB-0906", "Tumour_size"].max())
+print(metabric_patients.loc[cohort_mask, "Tumour_size"].max())
 ```
 
 For the same set of patients, you can check the minimum mutation count and identify which patient has it. For example:
 
 ```{python}
 print('\nMinimum for Mutation_count column for cohort 1 patients:')
-print(metabric_patients.loc["MB-0000":"MB-0906", "Mutation_count"].min())
+print(metabric_patients.loc[cohort_mask, "Mutation_count"].min())
 ```
 
-Here `min` and `max` are [functions](../learners/reference.md#function). 
+## Useful Helper Functions
 
-### Selecting Rows with Conditions
+Before plotting or building more complex summaries, a few small helpers make your life easier. These tools don’t change the meaning of your data—they help you clean rows, control order, and ask focused questions. After each command, check what changed: the values, the order, the labels, or the row count.
 
-Often the clearest way to explore a dataset is to pick a question and translate it into a short filter. For example: "Which patients have more than 25 mutations?", "Which older patients have small tumours?", or "Which rows belong to Cohort 1?" In Pandas you express those questions as comparisons on columns.
+### Missing Values
 
-For example, the snippet below extracts the `Mutation_count` column and shows how to test which rows have more than 25 mutations.
+It’s important to make sure your data doesn’t contain missing values (represented as `NaN`, which stands for "Not a Number"). Missing values can cause errors or misleading results in your analysis. For example, calculating the mean of a column with missing values will return NaN, and plotting functions might skip or misrepresent those data points.
+
+To handle this, you can use the `dropna()` method. This method removes any rows (or columns) that contain missing values. By default, `dropna()` removes rows where any column has a missing value.
+
+Drop rows where either '3-gene_classifier' or 'GATA3' is missing:
 
 ```{python}
-mutation_data = metabric_patients.loc[:, "Mutation_count"]
-print('Mutation data:\n', mutation_data)
-
-mask = mutation_data > 25
-print('\nWhich rows have mutations above 25?\n', mask)
+subset = metabric_patients.loc[:, ['3-gene_classifier', 'GATA3']].dropna()
+print('Rows before:', len(metabric_patients))
+print('Rows after dropna:', len(subset))
 ```
 
-The comparison returns a similarly-shaped dataframe of True/False values. This is often called a boolean mask because it 'masks' the rows that match the condition.
+You’ll see the original row count and a smaller count after `dropna()` command. The `subset` DataFrame keeps only rows where both columns are present. By default, rows are dropped if any of the specified columns are missing. To drop columns instead of rows, use `axis=1`. To control which columns are checked, pass `subset=[...]` (as above).
 
-You can use that mask to filter matching rows as follows:
+### Frequency of Values 
+
+To inspect how often each distinct value appears in a column, use `value_counts()`. This is particularly helpful for categorical variables (for example, labels) to check balance, spot rare categories, and reveal unexpected or missing labels. By default it returns counts sorted by frequency.
 
 ```{python}
-print(mutation_data[mask])
+metabric_patients.value_counts()
 ```
 
-Or apply the same mask to the DataFrame to show the corresponding rows (or a specific set of columns):
+When you call `value_counts()` on an entire DataFrame, each index represents a unique combination of values across all columns, and the count shows how many rows share that exact combination. Since each row in our dataset is unique, all counts will be 1—this is a quick way to check for duplicate rows.
+
+For a specific column (e.g., `3-gene_classifier`):
 
 ```{python}
-print(metabric_patients.loc[mask, 'Mutation_count':])
+metabric_patients.loc[:, '3-gene_classifier'].value_counts()
 ```
 
-You can then run summary methods on the filtered rows, for example:
+When used on a single column, `value_counts()` returns a single column dataframe (or Series) where the index lists each unique value (such as category names) and the corresponding values show how many times each occurs. In the example above, you’ll see four categories and their respective counts.
+
+Set `normalize=True` to display proportions (percentages) rather than raw counts.
 
 ```{python}
-print(metabric_patients.loc[mask, 'Mutation_count':].describe())
+metabric_patients.loc[:, '3-gene_classifier'].value_counts(normalize=True)
 ```
 
-
-Next, find patients who have a tumour size smaller than 5 mm and who were diagnosed at age 50 or older.
+To display percentages, multiply the result by 100:
 
 ```{python}
-# mask for tumours size (in mm) < 5
-tumour_mask = metabric_patients.loc[:, 'Tumour_size'] < 5
-
-# mask for age at diagnosis >= 50
-age_mask = metabric_patients.loc[:, 'Age_at_diagnosis'] >= 50
-
-# select rows that satisfy both conditions
-selected_patients = metabric_patients.loc[tumour_mask & age_mask, :]
-selected_patients
+metabric_patients.loc[:, '3-gene_classifier'].value_counts(normalize=True) * 100
 ```
 
-::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+By default, missing values (or `NaN`) are excluded from the result. This means that only rows with actual, non-missing values are counted in the frequency table. If you want to include missing values as their own category in the output, you can pass the argument `dropna=False` to `value_counts()`. This will show how many times `NaN` appears in the column, which is useful for quickly assessing the amount of missing data in a categorical variable.
 
-## Challenge: Slicing with Conditions
+```{python}
+metabric_patients.loc[:, '3-gene_classifier'].value_counts(dropna=False)
+```
 
-Find the maximum tumour size among patients in Cohort '1'. Write code that:
+::: {.callout-tip}
+## Tip — Missing Categories
 
-1. Selects only the rows that belong to Cohort '1'.
-2. From that subset, finds the maximum value in the `Tumour_size` column.
-3. Prints the patient(s) who have that maximum tumour size (hint: use `.max()` and `.loc`).
-
+Use `dropna=False` to see how many entries are missing. If your analysis should exclude missing rows entirely, clean first with `.dropna()` on the relevant columns (see the Missing Values section above) and then run `value_counts()`.
 :::
 
-::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
-
-## Solution
+Counts returned by `value_counts()` are automatically sorted from most to least frequent. If you want to sort the counts by the actual labels (in alphabetical order), you can use the `sort_index()` method. This is useful when you need to view your data categories in a predictable, ordered way rather than by their frequency.
 
 ```{python}
-# 1) Create mask to find patients in cohort 1
-cohort_mask = metabric_patients.loc[:, "Cohort"] == 1
-
-# 2) find the maximum tumour size
-max_size = metabric_patients.loc[cohort_mask, 'Tumour_size'].max()
-print('Maximum tumour size in Cohort 1:', max_size)
+metabric_patients.loc[:, 'Integrative_cluster'].value_counts().sort_index()
 ```
 
-We first filter the DataFrame to include only rows where `Cohort == '1'` and then use `.max()` to get the maximum value from the `Tumour_size` column.
+To display categories in a custom order (such as a clinically meaningful sequence), use the `reindex()` method. This lets you specify the exact order of labels you want to see in your output, rather than relying on alphabetical or frequency-based sorting. For example, if you have a desired order of cluster labels, you can filter to only those present in your data and then reindex the counts:
 
-This result should match the value obtained earlier when selecting cohort 1 patients by their patient ID range.
-:::
+```{python}
+counts = metabric_patients.loc[:, 'Integrative_cluster'].value_counts()
 
+# custom order (keep only labels that exist)
+desired = ["1", "2", "3", "4ER-", "4ER+", "5", "6", "7", "8", "9", "10"]
+present = [lab for lab in desired if lab in counts.index]
+counts_custom = counts.reindex(present)
+counts_custom
+```
+
+This approach first uses `value_counts()` to tally each unique value in the Integrative_cluster column, producing a pandas Series with cluster labels as the index and their counts as values. The `desired` list defines the preferred order for these labels.
+
+The code then filters `desired` to include only labels that are actually present in the data. Using `reindex(present)` rearranges the counts Series to match this custom order, ensuring the output is organized as intended.
+
+If a label from `desired` is missing in the data, it is simply omitted from the result—no NaNs are introduced. This method is especially helpful for displaying or plotting results in a meaningful sequence.
+
+
+
+### Sorting numeric values (and resetting the index)
+
+Use `sort_values()` to order numeric values. After sorting a Series, the original row labels (patient IDs) stay attached. Use `reset_index(drop=True)` if you want a clean 0..N-1 index for display.
+
+
+To order values from low to high, use `sort_values()`. After sorting a Series, the original row labels stay attached; use `reset_index(drop=True)` to create a clean 0..N-1 index.
+
+```{python}
+ages = metabric_patients.loc[:, 'Age_at_diagnosis']
+ages_sorted = ages.sort_values()
+ages_sorted_head = ages_sorted.reset_index(drop=True).head()
+ages_sorted_head
+```
+
+What the output shows
+
+- `ages_sorted` keeps the original labels so you can trace back to the patient.
+- After `reset_index(drop=True)`, the result starts at 0, which is handy for quick previews or exporting.
+
+### Unique Values
+
+Use `unique()` to list the distinct values observed. This returns a NumPy array. For a tidy display order, wrap with `sorted(...)`.
+
+```{python}
+metabric_patients.loc[:, '3-gene_classifier'].dropna().unique()
+# Tip: sorted(...) if you want them ordered for display
+# sorted(metabric_patients.loc[:, '3-gene_classifier'].dropna().unique())
+```
+
+
+{{< include ../_includes/footer.qmd >}}
+
+---
+<table style="width: 100%; border: none;">
+  <tr>
+    <td style="text-align: left; width: 50%;">
+        [← Previous](../vignettes/4_Analysing_Data.qmd)
+    </td>
+    <td style="text-align: right; width: 50%;">
+      [Next →](../vignettes/5_Visualising_Data.qmd)
+    </td>
+  </tr>
+</table>
 
 

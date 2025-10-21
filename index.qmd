@@ -17,7 +17,7 @@ By the end of this workshop, you will be able to:
 - Modify the appearance of plots 
 
 
-## Prerequisites
+## Prerequisites {#prerequisites}
 
 Before starting this course you will need to ensure that your computer is set up with the required software. If you have any difficulty installing any of this software then please contact the trainer at <a href="mailto:sandun.rajapaksa@petermac.org">sandun.rajapaksa@petermac.org</a> for help.
 
@@ -73,9 +73,9 @@ anaconda-navigator
 -   [Getting started with Navigator](https://docs.anaconda.com/free/navigator/getting-started/)
 -   [How to create/manage environments?](https://www.anaconda.com/docs/getting-started/working-with-conda/environments)
 
-### Step 2: Installing Integrated Development Environment (IDE)
+### Step 2: Installing Interactive Computing Environment (ICE)
 
-Once Python is installed, the next step is to install a preferred Integrated Development Environment (IDE) to start coding with Python. If you are a new user, we suggest using the **Jupyter Notebook**. 
+Once Python is installed, the next step is to install a preferred ICE to start coding with Python. If you are a new user, we suggest using the **Jupyter Notebook**. 
 
 #### Install Jupyter Notebook on your own computer
 

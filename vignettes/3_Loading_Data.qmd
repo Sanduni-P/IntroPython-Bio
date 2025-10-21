@@ -12,14 +12,13 @@ objectives:
 - Perform operations on arrays of data.
 keypoints:
 - Import a library into a program using `import libraryname`.
-- Use the `numpy` library to work with arrays in Python.
-- The expression `array.shape` gives the shape of an array.
-- Use `array[x, y]` to select a single element from a 2D array.
-- Array indices start at 0, not 1.
-- Use `low:high` to specify a `slice` that includes the indices from `low` to `high-1`.
-- Use `# some kind of explanation` to add comments to programs.
-- Use `numpy.mean(array)`, `numpy.amax(array)`, and `numpy.amin(array)` to calculate simple statistics.
-- Use `numpy.mean(array, axis=0)` or `numpy.mean(array, axis=1)` to calculate statistics across the specified axis.
+- Load data with `pd.read_csv(...)` and set a meaningful index.
+- Use dataframe members to understand the structure of a dataset.
+- Select values with `.iloc[...]` (by position) and `.loc[...]` (by labels).
+- Slice rows and columns
+- Inspect quickly with `head()`/`tail()`, `.info()`, and `.describe()` functions.
+- Filter rows using boolean masks built from column comparisons.
+
 ---
 
 {{< include ../_includes/header.qmd >}}
@@ -27,7 +26,7 @@ keypoints:
 Words are useful, but what's more useful are the sentences and stories we build with them.
 Similarly, while a lot of powerful, general tools are built into Python,
 specialized tools built up from these basic units live in
-[libraries](../learners/reference.md#library)
+[libraries](reference.md#library)
 that can be called upon when needed.
 
 ## Loading Data into Python
@@ -36,7 +35,7 @@ To begin processing the metabric dataset, we need to load it into Python.
 We can do that using a library called
 [Pandas](https://pandas.pydata.org/docs/). It is a powerful and widely used library for data manipulation and analysis. It provides versatile data structures, such as DataFrames and Series, along with a variety of functions and methods for efficiently handling and processing structured data. In this session, we explore some functionalities of Pandas library that is useful for biological data analysis.
 To tell Python that we'd like to start using Pandas,
-we need to [import](../learners/reference.md#import) it:
+we need to [import](reference.md#import) it:
 
 ```{python}
 import pandas
@@ -86,8 +85,8 @@ pd.read_csv("https://zenodo.org/record/6450144/files/metabric_clinical_and_expre
 ```
 
 The expression `pd.read_csv(...)` is a
-[function call](../learners/reference.md#function-call)
-that asks Python to run the [function](../learners/reference.md#function) `read_csv` which
+[function call](reference.md#function-call)
+that asks Python to run the [function](reference.md#function) `read_csv` which
 belongs to the `pd` library (i.e., Pandas library).
 The dot notation in Python is used most of all as an object attribute/property specifier or for invoking its method. `object.property` will give you the object.property value,
 `object_name.method()` will invoke on object\_name method.
@@ -96,13 +95,13 @@ As an example, John Smith is the John that belongs to the Smith family.
 We could use the dot notation to write his name `smith.john`,
 just as `read_csv` is a function that belongs to the `pd` library.
 
-`pd.read_csv` has two [parameters](../learners/reference.md#parameter): the name of the file or a URL
-we want to read and the [delimiter](../learners/reference.md#delimiter) that separates values
+`pd.read_csv` has two [parameters](reference.md#parameter): the name of the file or a URL
+we want to read and the [delimiter](reference.md#delimiter) that separates values
 on a line. These both need to be character strings
-(or [strings](../learners/reference.md#string) for short), so we put them in quotes.
+(or [strings](reference.md#string) for short), so we put them in quotes.
 
 Since we haven't told it to do anything else with the function's output,
-the [notebook](../learners/reference.md#notebook) displays it.
+the [notebook](reference.md#notebook) displays it.
 In this case,
 that output is the data we just loaded.
 By default,
@@ -132,7 +131,7 @@ print(metabric)
 Now that the data are in memory,
 we can manipulate them.
 First,
-let's ask what [type](../learners/reference.md#type) of thing `metabric` refers to:
+let's ask what [type](reference.md#type) of thing `metabric` refers to:
 
 ```{python}
 print(type(metabric))
@@ -237,7 +236,7 @@ The output tells us that the `metabric_patients` dataframe variable contains 190
 
 When we
 created the variable `metabric_patients` to store our data, we did not only create the dataframe; we also
-created information about the dataframe, called [members](../learners/reference.md#member) or
+created information about the dataframe, called [members](reference.md#member) or
 attributes. This extra information describes `metabric_patients` in the same way an adjective describes a noun.
 `metabric_patients.shape` is an attribute of `metabric_patients` which describes the dimensions of `metabric_patients`. We use the same
 dotted notation for the attributes of variables that we use for the functions in libraries because
@@ -266,7 +265,7 @@ metabric_patients.dtypes
 ```
 
 
-::: {.callout-tip}
+::: {.callout-tip collapse="true"}
 
 ## Getting Help with DataFrames
 
@@ -438,7 +437,7 @@ for the first four patients (rows) like this:
 metabric_patients.iloc[0:4, 0:10]
 ```
 
-The [slice](../learners/reference.md#slice) `0:4` means, "Start at index 0 and go up to,
+The [slice](reference.md#slice) `0:4` means, "Start at index 0 and go up to,
 but not including, index 4". Again, the up-to-but-not-including takes a bit of getting used to,
 but the rule is that the difference between the upper and lower bounds is the number of values in
 the slice.
@@ -462,7 +461,6 @@ print(small)
 ```
 
 The above example selects rows 0 through 2 and columns 24 through to the end of the dataframe.
-
 
 ::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
 
@@ -494,3 +492,102 @@ print('small is:')
 print(small)
 ```
 :::
+
+### Selecting Rows with Conditions (Boolean Masks) {#boolean-masks}
+
+Often the clearest way to explore a dataset is to pick a question and translate it into a short filter. For example: "Which patients have more than 25 mutations?", "Which older patients have small tumours?", or "Which rows belong to Cohort 1?" In Pandas you express those questions as comparisons on columns.
+
+For example, the snippet below extracts the `Mutation_count` column and shows how to test which rows have more than 25 mutations.
+
+```{python}
+mutation_data = metabric_patients.loc[:, "Mutation_count"]
+print('Mutation data:\n', mutation_data)
+
+mask = mutation_data > 25
+print('\nWhich rows have mutations above 25?\n', mask)
+```
+
+The comparison returns a similarly-shaped dataframe of True/False values. This is often called a boolean mask because it 'masks' the rows that match the condition.
+
+You can use that mask to filter matching rows as follows:
+
+```{python}
+print(mutation_data[mask])
+```
+
+Or apply the same mask to the DataFrame to show the corresponding rows (or a specific set of columns):
+
+```{python}
+print(metabric_patients.loc[mask, 'Mutation_count':])
+```
+
+You can then run summary methods on the filtered rows, for example:
+
+```{python}
+print(metabric_patients.loc[mask, 'Mutation_count':].describe())
+```
+
+
+Next, find patients who have a tumour size smaller than 5 mm and who were diagnosed at age 50 or older.
+
+```{python}
+# mask for tumours size (in mm) < 5
+tumour_mask = metabric_patients.loc[:, 'Tumour_size'] < 5
+
+# mask for age at diagnosis >= 50
+age_mask = metabric_patients.loc[:, 'Age_at_diagnosis'] >= 50
+
+# select rows that satisfy both conditions
+selected_patients = metabric_patients.loc[tumour_mask & age_mask, :]
+selected_patients
+```
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Challenge: Find the patient with the maximum tumour size
+
+1. Create a boolean mask for patients in Cohort 1.
+2. Use that mask to select the `Tumour_size` column and run `.describe()`; read the “max” value from the summary.
+3. Build a second mask to find the patient(s) in Cohort 1 whose `Tumour_size` equals that maximum, and display those rows (at least show `Tumour_size`).
+
+*Hint: When you call `.describe()` on a single column (a Series), the result is another Series. You can access the maximum value using `summary['max']` or `summary.loc['max']`. Since you're working with a single column, you don't need to specify the column name in `.loc[]`.*
+
+:::
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Solution
+
+```{python}
+# 1) Mask for Cohort 1
+cohort_mask = metabric_patients.loc[:, 'Cohort'] == 1
+
+# 2) Describe tumour sizes in Cohort 1 and read the maximum
+summary = metabric_patients.loc[cohort_mask, 'Tumour_size'].describe()
+max_size = summary.loc['max']
+print('Maximum tumour size in Cohort 1:', max_size)
+
+# 3) Find patient(s) in Cohort 1 with that maximum size
+is_max = metabric_patients.loc[:, 'Tumour_size'] == max_size
+hits = metabric_patients.loc[cohort_mask & is_max, ['Tumour_size']]
+print('\nPatients at the maximum tumour size:\n', hits)
+```
+
+We first filter rows with a boolean mask (`Cohort == 1`). The `.describe()` summary on the masked `Tumour_size` gives labeled entries: `count`, `mean`, `std`, `min`, `25%`, `50%`, `75%`, and `max`. We can retrieve the maximum using `summary.loc['max']` or (`summary['max']`). We then use another boolean comparison (`== max_size`) to show the row(s) that match that exact value.
+
+:::
+
+{{< include ../_includes/footer.qmd >}}
+
+---
+<table style="width: 100%; border: none;">
+  <tr>
+    <td style="text-align: left; width: 50%;">
+        [← Previous](../vignettes/2_Intro_Python.qmd)
+    </td>
+    <td style="text-align: right; width: 50%;">
+      [Next →](../vignettes/4_Analysing_Data.qmd)
+    </td>
+  </tr>
+</table>
+

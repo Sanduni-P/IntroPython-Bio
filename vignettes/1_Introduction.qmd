@@ -1,64 +1,344 @@
 ---
 title: "Getting Started with Jupyter Notebook"
-teaching: 10
-exercises: 5
+teaching: 25
+exercises: 15
 questions:
 - "How do I use Jupyter Notebook for Python programming?"
 - "What are the different cell types and how do I use them?"
 - "How can I efficiently navigate and edit in Jupyter Notebook?"
 objectives:
-- "Open and create a new Jupyter Notebook"
-- "Understand the difference between edit mode and command mode"
-- "Identify and switch between cell types (Code, Markdown, Raw)"
-- "Use keyboard shortcuts to work efficiently"
-- "Execute Python code in notebook cells"
+- Launch the JupyterLab server.
+- Create a new Python script.
+- Create a Jupyter notebook.
+- Shutdown the JupyterLab server.
+- Understand the difference between a Python script and a Jupyter notebook.
+- Create Markdown cells in a notebook.
+- Create and run Python cells in a notebook.
 keypoints:
 - "Jupyter Notebook provides an interactive environment for Python programming"
 - "Code cells execute Python code, Markdown cells contain formatted text"
 - "Keyboard shortcuts improve efficiency when working with notebooks"
 - "Edit mode is for typing content, Command mode is for cell operations"
 - "Save your work frequently using Ctrl+S (Cmd+S on Mac)"
+- "The Notebook will turn Markdown into pretty-printed documentation."
+- "Markdown does most of what HTML does."
+
 ---
 
 {{< include ../_includes/header.qmd >}}
 
+To run Python, we are going to use [Jupyter Notebooks](https://jupyter.org/) via [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) for the remainder of this workshop. Jupyter notebooks are common in data science and visualization and serve as a convenient common-denominator experience for running Python code interactively where we can easily view and share the results of our Python code.
 
-## What is Jupyter Notebook?
+There are other ways of editing, managing, and running code. Software developers often use an integrated development environment (IDE) like [PyCharm](https://www.jetbrains.com/pycharm/) or [Visual Studio Code](https://code.visualstudio.com/), or text editors like Vim or Emacs, to create and edit their Python programs. After editing and saving your Python programs you can execute those programs within the IDE itself or directly on the command line. In contrast, Jupyter notebooks let us execute and view the results of our Python code immediately within the notebook.
 
-In this lesson, you'll get started with Jupyter Notebook—a powerful tool for writing, running, and documenting Python code interactively. Notebooks are useful in research and reproducible science because they let you combine your analysis, results, and notes all in one place. 
+JupyterLab has several other handy features:
 
-We'll explore how to open notebooks, use different cell types, and efficiently navigate the interface to support your Python programming.
+- You can easily type, edit, and copy and paste blocks of code.
+- Tab complete allows you to easily access the names of things you are using
+  and learn more about them.
+- It allows you to annotate your code with links, different sized text, bullets, etc.
+  to make it more accessible to you and your collaborators.
+- It allows you to display figures next to the code that produces them
+  to tell a complete story of the analysis.
 
-### Creating a Notebook
+Each notebook contains one or more cells that contain code, text, or images.
 
-#### Open Jupyter Notebook
-   
-Launch Jupyter Notebook from your computer. In the Jupyter interface, click "New" and select "Notebook" to create a new notebook.
 
-::: columns
-::: {.column}
-![](images/new-notebook.png){height="160pt"}
+## Getting Started with JupyterLab
+
+JupyterLab is an application server with a web user interface from [Project Jupyter](https://jupyter.org/) that
+enables one to work with documents and activities such as Jupyter notebooks, text editors, terminals,
+and even custom components in a flexible, integrated, and extensible manner. JupyterLab requires a
+reasonably up-to-date browser (ideally a current version of Chrome, Safari, or Firefox); Internet
+Explorer versions 9 and below are *not* supported.
+
+JupyterLab is included as part of the Anaconda Python distribution. If you have not already
+installed the Anaconda Python distribution, see [the setup instructions](../index.qmd#prerequisites)
+for installation instructions.
+
+In this lesson we will run JupyterLab locally on our own machines so it will not require an internet connection besides
+the initial connection to download and install Anaconda and JupyterLab
+
+- Start the JupyterLab server on your machine
+- Use a web browser to open a special localhost URL that connects to your JupyterLab server
+- The JupyterLab server does the work and the web browser renders the result
+- Type code into the browser and see the results after your JupyterLab server has finished executing your code
+
+::: {.callout-note}
+
+## JupyterLab? What about Jupyter notebooks?
+
+JupyterLab is the [next stage in the evolution of the Jupyter Notebook](https://jupyterlab.readthedocs.io/en/stable/getting_started/overview.html#overview).
+If you have prior experience working with Jupyter notebooks, then you will have a good idea of what to expect from JupyterLab.
+
+Experienced users of Jupyter notebooks interested in a more detailed discussion of the similarities and differences
+between the JupyterLab and Jupyter notebook user interfaces can find more information in the
+[JupyterLab user interface documentation](https://jupyterlab.readthedocs.io/en/stable/user/interface.html).
+
 :::
 
-::: {.column}
-![](images/new-notebook1.png){height="160pt"}
+
+## Starting JupyterLab
+
+You can start the JupyterLab server through the command line or through an application called
+`Anaconda Navigator`. Anaconda Navigator is included as part of the Anaconda Python distribution.
+
+### macOS - Command Line
+
+To start the JupyterLab server you will need to access the command line through the Terminal.
+There are two ways to open Terminal on Mac.
+
+1. In your Applications folder, open Utilities and double-click on Terminal
+2. Press <kbd>Command</kbd> + <kbd>spacebar</kbd> to launch Spotlight. Type `Terminal` and then   double-click the search result or hit <kbd>Return</kbd>
+
+After you have launched Terminal, type the command to launch the JupyterLab server.
+
+```bash
+$ jupyter lab
+```
+
+### Windows Users - Command Line
+
+To start the JupyterLab server you will need to access the Anaconda Prompt.
+
+Press <kbd>Windows Logo Key</kbd> and search for `Anaconda Prompt`, click the result or press enter.
+
+After you have launched the Anaconda Prompt, type the command:
+
+```bash
+$ jupyter lab
+```
+
+### Anaconda Navigator
+
+To start a JupyterLab server from Anaconda Navigator you must first [start Anaconda Navigator (click for detailed instructions on macOS, Windows, and Linux)](https://docs.anaconda.com/free/navigator/getting-started/#navigator-starting-navigator). You can search for Anaconda Navigator via Spotlight on macOS (<kbd>Command</kbd> + <kbd>spacebar</kbd>), the Windows search function (<kbd>Windows Logo Key</kbd>) or opening a terminal shell and executing the `anaconda-navigator` executable from the command line.
+
+After you have launched Anaconda Navigator, click the `Launch` button under JupyterLab. You may need
+to scroll down to find it.
+
+Here is a screenshot of an Anaconda Navigator page similar to the one that should open on either macOS
+or Windows.
+
+<p align='center'>
+  <img alt="Anaconda Navigator landing page" src="images/0_anaconda_navigator_landing_page.png" width="750"/>
+</p>
+
+And here is a screenshot of a JupyterLab landing page that should be similar to the one that opens in your
+default web browser after starting the JupyterLab server on either macOS or Windows.
+
+<p align='center'>
+  <img alt="JupyterLab landing page" src="images/0_jupyterlab_landing_page.png" width="750"/>
+</p>
+
+## The JupyterLab Interface
+
+JupyterLab has many features found in traditional integrated development environments (IDEs) but
+is focused on providing flexible building blocks for interactive, exploratory computing.
+
+The [JupyterLab Interface](https://jupyterlab.readthedocs.io/en/stable/user/interface.html)
+consists of the Menu Bar, a collapsable Left Side Bar, and the Main Work Area which contains tabs
+of documents and activities.
+
+### Menu Bar
+
+The Menu Bar at the top of JupyterLab has the top-level menus that expose various actions
+available in JupyterLab along with their keyboard shortcuts (where applicable). The following
+menus are included by default.
+
+- **File:** Actions related to files and directories such as *New*, *Open*, *Close*, *Save*, etc. The *File* menu also includes the *Shut Down* action used to shutdown the JupyterLab server.
+- **Edit:** Actions related to editing documents and other activities such as *Undo*, *Cut*, *Copy*, *Paste*, etc.
+- **View:** Actions that alter the appearance of JupyterLab.
+- **Run:** Actions for running code in different activities such as notebooks and code consoles (discussed below).
+- **Kernel:** Actions for managing kernels. Kernels in Jupyter will be explained in more detail below.
+- **Tabs:** A list of the open documents and activities in the main work area.
+- **Settings:** Common JupyterLab settings can be configured using this menu. There is also an *Advanced Settings Editor* option in the dropdown menu that provides more fine-grained control of JupyterLab settings and configuration options.
+- **Help:** A list of JupyterLab and kernel help links.
+
+::: {.callout-note}
+
+## Kernels
+
+The JupyterLab [docs](https://jupyterlab.readthedocs.io/en/stable/user/documents_kernels.html)
+define kernels as "separate processes started by the server that runs your code in different programming languages and environments."
+When we open a Jupyter Notebook, that starts a kernel - a process - that is going to run the code.
+In this lesson, we'll be using the Jupyter ipython kernel which lets us run Python 3 code interactively.
+
+Using other Jupyter [kernels for other programming languages](https://github.com/jupyter/jupyter/wiki/Jupyter-kernels) would let us
+write and execute code in other programming languages in the same JupyterLab interface, like R, Java, Julia, Ruby, JavaScript, Fortran,
+etc.
+
 :::
+
+A screenshot of the default Menu Bar is provided below.
+
+<p align='center'>   <img alt="JupyterLab Menu Bar" src="images/0_jupyterlab_menu_bar.png" width="750"/>
+</p>
+
+### Left Sidebar
+
+The left sidebar contains a number of commonly used tabs, such as a file browser (showing the
+contents of the directory where the JupyterLab server was launched), a list of running kernels
+and terminals, the command palette, and a list of open tabs in the main work area. A screenshot of
+the default Left Side Bar is provided below.
+
+<p align='center'>   <img alt="JupyterLab Left Side Bar" src="images/0_jupyterlab_left_side_bar.png" width="250"/>
+</p>
+
+The left sidebar can be collapsed or expanded by selecting "Show Left Sidebar" in the View menu or
+by clicking on the active sidebar tab.
+
+### Main Work Area
+
+The main work area in JupyterLab enables you to arrange documents (notebooks, text files, etc.)
+and other activities (terminals, code consoles, etc.) into panels of tabs that can be resized or
+subdivided. A screenshot of the default Main Work Area is provided below.
+
+If you do not see the Launcher tab, click the blue plus sign under the "File" and "Edit" menus and it will appear.
+
+<p align='center'>   <img alt="JupyterLab Main Work Area" src="images/0_jupyterlab_main_work_area.png" width="750"/>
+</p>
+
+Drag a tab to the center of a tab panel to move the tab to the panel. Subdivide a tab panel by
+dragging a tab to the left, right, top, or bottom of the panel. The work area has a single current
+activity. The tab for the current activity is marked with a colored top border (blue by default).
+
+## Creating a Python script
+
+- To start writing a new Python program click the Text File icon under the *Other* header in the Launcher tab of the Main Work Area.
+  - You can also create a new plain text file by selecting the *New -> Text File* from the *File* menu in the Menu Bar.
+- To convert this plain text file to a Python program, select the *Save File As* action from the *File* menu in the Menu Bar and give your new text file a name that ends with the `.py` extension.
+  - The `.py` extension lets everyone (including the operating system) know that this text file is a Python program.
+  - This is convention, not a requirement.
+
+## Creating a Jupyter Notebook
+
+To open a new notebook click the Python 3 icon under the *Notebook* header in the Launcher tab in
+the main work area. You can also create a new notebook by selecting *New -> Notebook* from the *File* menu in the Menu Bar.
+
+
+![](images/new-notebook.png){fig-align="center"}
+
+
+Additional notes on Jupyter notebooks.
+
+- Notebook files have the extension `.ipynb` to distinguish them from plain-text Python programs.
+- Notebooks can be exported as Python scripts that can be run from the command line.
+
+Below is a screenshot of a Jupyter notebook running inside JupyterLab. If you are interested in
+more details, then see the [official notebook documentation](https://jupyterlab.readthedocs.io/en/stable/user/notebook.html).
+
+<p align='center'>   <img alt="Example Jupyter Notebook" src="images/0_jupyterlab_notebook_screenshot.png" width="750"/>
+</p>
+
+::: {.callout-note}
+
+## How It's Stored
+
+- The notebook file is stored in a format called JSON.
+- Just like a webpage, what's saved looks different from what you see in your browser.
+- But this format allows Jupyter to mix source code, text, and images, all in one file.
+  
 :::
 
-#### Navigating Modes
+::: {.callout-note}
 
-Jupyter Notebook has two modes:
+## Code vs. Text
 
-1. **Edit mode** (blue cell border): Type code or text into a cell. Enter edit mode by pressing <kbd>Enter</kbdor clicking inside a cell.
+Jupyter mixes code and text in different types of blocks, called cells. We often use the term
+"code" to mean "the source code of software written in a language such as Python".
+A "code cell" in a Notebook is a cell that contains software;
+a "text cell" is one that contains ordinary prose written for human beings.
+
+:::
+
+
+## The Notebook has Command and Edit modes.
+
+If you press <kbd>Esc</kbd> and <kbd>Enter</kbd> alternately, the outer border of your code cell will change from gray to blue.
+
+1. **Edit mode** (blue cell border): Type code or text into a cell. Enter edit mode by pressing <kbd>Enter</kbd> or clicking inside a cell. This mode changes the content of cells.
 
      ![](images/mode-edit.png)
 
-2. **Command mode** (grey cell border): Use keyboard shortcuts to manage cells. Enter command mode by pressing <kbd>Esc</kbd>.
+2. **Command mode** (grey cell border): Use keyboard shortcuts to manage cells. Enter command mode by pressing <kbd>Esc</kbd>. Command mode allows you to edit notebook-level features. 
 
      ![](images/mode-command.png)
 
-#### Cell Types
-   
+
+When in Command mode,
+
+  - The <kbd>b</kbd> key will make a new cell below the currently selected cell.
+    ![](images/insert-block1.png) ![](images/insert-block2.png)
+  - The <kbd>a</kbd> key will make one above.
+    ![](images/insert-block3.png)
+  - The <kbd>x</kbd> key will delete the current cell.
+  - The <kbd>D</kbd>+ <kbd>D</kbd> will delete selected cells  
+  ![](images/delete-block.png)
+  - The <kbd>z</kbd> key will undo your last cell operation (which could be a deletion, creation, etc).
+- All actions can be done using the menus, but there are lots of keyboard shortcuts to speed things up.
+
+To view all shortcuts, go to Help → Keyboard Shortcuts, or press <kbd>H</kbd> in command mode.
+
+![](images/keyboard-shortcuts.png)
+
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Command Vs. Edit
+
+- In the Jupyter notebook page are you currently in Command or Edit mode?  
+- Switch between the modes.
+- Use the shortcuts to generate a new cell.
+- Use the shortcuts to delete a cell.
+- Use the shortcuts to undo the last cell operation you performed.
+
+:::
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Solution
+
+- Command mode has a grey border and Edit mode has a blue border.
+- Use <kbd>Esc</kbd> and <kbd>Enter</kbd> to switch between modes.
+- You need to be in Command mode (Press <kbd>Esc</kbd> if your cell is blue).  Type <kbd>b</kbd> or <kbd>a</kbd>.
+- You need to be in Command mode (Press <kbd>Esc</kbd> if your cell is blue).  Type <kbd>x</kbd>.
+- You need to be in Command mode (Press <kbd>Esc</kbd> if your cell is blue).  Type <kbd>z</kbd>.
+
+:::
+
+### Use the keyboard and mouse to select and edit cells.
+
+- Pressing the <kbd>Enter</kbd> key turns the border blue and engages Edit mode, which allows
+  you to type within the cell.
+- Because we want to be able to write many lines of code in a single cell,
+  pressing the <kbd>Enter</kbd> key when in Edit mode (blue) moves the cursor to the next line
+  in the cell just like in a text editor.
+- We need some other way to tell the Notebook we want to run what's in the cell.
+- Pressing <kbd>Shift</kbd>\+<kbd>Enter</kbd> together will execute the contents of the cell.
+- Notice that the <kbd>Enter</kbd> and <kbd>Shift</kbd> keys on the right of the keyboard are right next to each other.
+
+### Running and Managing Cells
+
+- **Run a cell:**  <kbd>Shift</kbd> + <kbd>Enter</kbd>
+
+    ![](images/run-cell.png)
+
+- **Run selected cells:**   <kbd>Ctrl</kbd> + <kbd>Enter</kbd> (Mac: <kbd>Cmd</kbd> + <kbd>Return</kbd>)
+
+  ![](images/run-menu.png)
+
+- **Save notebook:**  <kbd>Ctrl</kbd> + <kbd>S</kbd> (Mac: <kbd>Cmd</kbd> + <kbd>S</kbd>)
+
+    
+
+### The Notebook will turn Markdown into pretty-printed documentation.
+
+Notebooks can also render [Markdown](https://en.wikipedia.org/wiki/Markdown).
+
+  - A simple plain-text format for writing lists, links,
+    and other things that might go into a web page.
+  - Equivalently, a subset of HTML that looks like what you'd send in an old-fashioned email.
+
 Notebooks contain different cell types:
 
 - **Code cells:** For writing and running Python code.
@@ -69,132 +349,188 @@ Change cell type using the drop-down menu in the toolbar.
 
 ![](images/cell-type.png)
 
-##### Working with Markdown Cells
+- Turn the current cell into a Markdown cell by entering the Command mode (<kbd>Esc</kbd>/gray)
+  and press the <kbd>M</kbd> key.
+- `In [ ]:` will disappear to show it is no longer a code cell and you will be able to write in
+  Markdown.
+- Turn the current cell into a Code cell by entering the Command mode (<kbd>Esc</kbd>/gray) and
+  press the <kbd>y</kbd> key.
 
-Markdown cells allow you to add formatted text, explanations, and documentation to your notebook:
+### Markdown does most of what HTML does.
 
-1. **Change a cell to Markdown type** using the dropdown menu or press <kbd>M</kbdin command mode
-2. **Add some formatted text:**
+Table: Showing some markdown syntax and its rendered output.
 
-```markdown
-# This is a heading
-## This is a subheading
-
-**Bold text** and *italic text*
-
-- Bullet point 1
-- Bullet point 2
-
-```
-
-3. **Run the cell** to see the formatted output
-
----
-
-### Running and Managing Cells
-
-- **Run a cell:**  <kbd>Shift</kbd> + <kbd>Enter</kbd>
-
-    ![](images/run-cell.png)
-
-- **Run selected cells:**   <kbd>Ctrl</kbd> + <kbd>Enter</kbd> (Mac: <kbd>Cmd</kbd> + <kbd>Enter</kbd>)
-
-- **Run cell and insert below:**  <kbd>Alt</kbd> + <kbd>Enter</kbd> (Mac: <kbd>Option</kbd> + <kbd>Enter</kbd>)
-
-- **Save notebook:**  <kbd>Ctrl</kbd> + <kbd>S</kbd> (Mac: <kbd>Cmd</kbd> + <kbd>S</kbd>)
-
-    ![](images/run-menu.png)
-
-### Useful Shortcuts in Command Mode
-
-- <kbd>Up</kbd>: Select cell above
-- <kbd>Down</kbd>: Select cell below
-- <kbd>Shift</kbd> + <kbd>Up</kbd>: Extend selection above
-- <kbd>Shift</kbd> + <kbd>Down</kbd>: Extend selection below
-- <kbd>A</kbd>: Insert cell above  
-  ![](images/insert-block3.png)
-- <kbd>B</kbd>: Insert cell below  
-  ![](images/insert-block1.png) ![](images/insert-block2.png)
-- <kbd>D</kbd>+ <kbd>D</kbd>: Delete selected cells  
-  ![](images/delete-block.png)
-
-- **View all shortcuts:**  
-  Go to Help → Keyboard Shortcuts, or press <kbd>H</kbdin command mode.
-
-    ![](images/keyboard-shortcuts.png)
++---------------------------------------+------------------------------------------------+
+| Markdown code                         | Rendered output                                |
++=======================================+================================================+
++---------------------------------------+------------------------------------------------+
+| ```                                   | <p></p>                                        |
+| *   Use asterisks                     | -   Use asterisks                              |
+| *   to create                         | -   to create                                  |
+| *   bullet lists.                     | -   bullet lists.                              |
+| ```                                   |                                                |
++---------------------------------------+------------------------------------------------+
++---------------------------------------+------------------------------------------------+
+| ```                                   | <p></p>                                        |
+| 1.   Use numbers                      | 1.   Use numbers                               |
+| 1.   to create                        | 2.   to create                                 |
+| 1.   bullet lists.                    | 3.   numbered lists.                           |
+| ```                                   |                                                |
++---------------------------------------+------------------------------------------------+
++---------------------------------------+------------------------------------------------+
+| ```                                   | <p></p>                                        |
+| *  You can use indents                | - You can use indents                          |
+|   *  To create sublists               |   - To create sublists                         |
+|   *  of the same type                 |   - of the same type                           |
+| *  Or sublists                        | - Or sublists                                  |
+|   1. Of different                     |   1. Of different                              |
+|   1. types                            |   2. types                                     |
+| ```                                   |                                                |
++---------------------------------------+------------------------------------------------+
++---------------------------------------+------------------------------------------------+
+| ```                                   | <p></p>                                        |
+| # A Level-1 Heading                   | ## A Level-1 Heading                           |
+| ```                                   |                                                |
++---------------------------------------+------------------------------------------------+
++---------------------------------------+------------------------------------------------+
+| ```                                   | <p></p>                                        |
+| ## A Level-2 Heading (etc.)           | ### A Level-2 Heading (etc.)                   |
+| ```                                   |                                                |
++---------------------------------------+------------------------------------------------+
++---------------------------------------+------------------------------------------------+
+| ```                                   | <p></p>                                        |
+| Line breaks                           | Line breaks                                    |
+| don't matter.                         | don't matter.                                  |
+|                                       |                                                |
+| But blank lines                       | But blank lines                                |
+| create new paragraphs.                | create new paragraphs.                         |
+| ```                                   |                                                |
++---------------------------------------+------------------------------------------------+
++---------------------------------------+------------------------------------------------+
+| ```                                   | <p></p>                                        |
+| [Links](http://software-carpentry.org)| [Links](https://software-carpentry.org)        |
+| are created with `[...](...)`.        | are created with `[...](...)`.                 |
+| Or use [named links][data-carp].      | Or use [named links][data_carpentry].          |
+|                                       |                                                |
+| [data-carp]: http://datacarpentry.org |                                                |
+| ```                                   |                                                |
++---------------------------------------+------------------------------------------------+
 
 
 ::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
 
-## Challenge: Your First Markdown and Code Cells
+## Creating Lists in Markdown
 
-In this exercise, you'll create two new cells in your notebook:
+Create a nested list in a Markdown cell in a notebook that looks like this:
 
-1. A **Markdown cell** to describe the biological question you are investigating. Copy and paste the following markdown text to your notebook and run the cell.
-  ```markdown
-  ## Investigating Gene Expression in Breast Cancer
-
-  We are interested in **analysing the expression levels** of a gene of interest (e.g., *TP53*) across a cohort of breast cancer patients from the METABRIC dataset.
-
-  We will start by creating a small example dataset representing expression levels of *TP53* in 5 patients.
-  ```
-
-
-2. A **Code cell** to simulate and explore a simple biological dataset. Copy and paste the following Python code to another cell in your notebook and run the cell.
-  ```python
-  # Example expression levels of TP53 in 5 patients
-  tp53_expression = [8.5, 7.2, 9.1, 6.8, 7.9]
-
-  # Calculate the average expression
-  average_expression = sum(tp53_expression) / len(tp53_expression)
-
-  print("Average TP53 expression across 5 patients:", average_expression)
-  ```
+1. Get funding.
+2. Do work.
+  - Design experiment.
+  - Collect data.
+  - Analyze.
+3. Write up.
+4. Publish.
 
 :::
 
 ::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
 ## Solution
 
-1. Create a new notebook.
+This challenge integrates both the numbered list and bullet list.
+Note that the bullet list is indented 2 spaces so that it is inline with the items of the numbered list.
 
-![](images/jupyter-notebook-open.png)
-
-2. In a new cell, switch to **Markdown mode** (press <kbd>M</kbd>) and copy the following text:
-
-```markdown
-## Investigating Gene Expression in Breast Cancer
-
-We are interested in **analysing the expression levels** of a gene of interest (e.g., *TP53*) across a cohort of breast cancer patients from the METABRIC dataset.
-
-We will start by creating a small example dataset representing expression levels of *TP53* in 5 patients.
+```
+1.  Get funding.
+2.  Do work.
+    *   Design experiment.
+    *   Collect data.
+    *   Analyze.
+3.  Write up.
+4.  Publish.
 ```
 
-Now **run** the Markdown cell (<kbd>Shift</kbd> + <kbd>Enter</kbd> or <kbd>cmd</kbd> + <kbd>Enter</kbd>) to render the formatted text.
-
-3. Create another cell below. Press <kbd>B</kbd> when you are in command mode to insert a cell below. In that cell, **switch to Code mode** (press <kbd>Y</kbd> in command mode) and paste the following Python code:
-
-  ```python
-  # Example expression levels of TP53 in 5 patients
-  tp53_expression = [8.5, 7.2, 9.1, 6.8, 7.9]
-
-  # Calculate the average expression
-  average_expression = sum(tp53_expression) / len(tp53_expression)
-
-  print("Average TP53 expression across 5 patients:", average_expression)
-  ```
-
-Run the cell (<kbd>Shift</kbd> + <kbd>Enter</kbd> or <kbd>cmd</kbd> + <kbd>Enter</kbd>) and check that it displays the average expression.
-
-The output should display:
-
-**Code Cell Output:**
-```
-Average TP53 expression across 5 patients: 7.9
-```
-
-This exercise demonstrates how Jupyter notebooks combine documentation (Markdown) with executable code, making them perfect for reproducible research in bioinformatics.
 :::
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## More Math
+
+What is displayed when a Python cell in a notebook
+that contains several calculations is executed?
+For example, what happens when this cell is executed?
+
+```python
+7 * 3
+2 + 1
+```
+
+:::
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Solution
+
+Python returns the output of the last calculation.
+
+```python
+3
+```
+
+:::
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Change an Existing Cell from Code to Markdown
+
+What happens if you write some Python in a code cell
+and then you switch it to a Markdown cell?
+For example,
+put the following in a code cell:
+
+```python
+x = 6 * 7 + 12
+print(x)
+```
+
+And then run it with <kbd>Shift</kbd>\+<kbd>Enter</kbd> to be sure that it works as a code cell.
+Now go back to the cell and use <kbd>Esc</kbd> then <kbd>m</kbd> to switch the cell to Markdown
+and "run" it with <kbd>Shift</kbd>\+<kbd>Enter</kbd>.
+What happened and how might this be useful?
+
+:::
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Solution
+
+The Python code gets treated like Markdown text.
+The lines appear as if they are part of one contiguous paragraph.
+This could be useful to temporarily turn on and off cells in notebooks that get used for multiple purposes.
+
+```python
+x = 6 * 7 + 12 print(x)
+```
+
+:::
+
+## Closing JupyterLab
+
+- From the Menu Bar select the "File" menu and then choose "Shut Down" at the bottom of the dropdown menu. You will be prompted to confirm that you wish to shutdown the JupyterLab server (don't forget to save your work!). Click "Shut Down" to shutdown the JupyterLab server.
+- To restart the JupyterLab server you will need to re-run the following command from a shell.
+
+```
+$ jupyter lab
+```
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Closing JupyterLab
+
+Practice closing and restarting the JupyterLab server.
+
+:::
+
 
 {{< include ../_includes/footer.qmd >}}
 ---
@@ -205,7 +541,5 @@ This exercise demonstrates how Jupyter notebooks combine documentation (Markdown
     </td>
   </tr>
 </table>
-    </td>
-  </tr>
-</table>
+
    

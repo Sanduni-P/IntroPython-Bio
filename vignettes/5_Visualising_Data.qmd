@@ -638,6 +638,7 @@ We covered fundamental plots you’ll use often, but Matplotlib supports many mo
 With these tools, you can iterate from a quick exploratory figure to a polished, publication‑ready visualisation that communicates your story clearly.
 
 {{< include ../_includes/footer.qmd >}}
+
 ---
 <table style="width: 100%; border: none;">
   <tr>
