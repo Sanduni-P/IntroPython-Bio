@@ -30,7 +30,7 @@ specialized tools built up from these basic units live in
 [libraries](../learners/reference.md#library)
 that can be called upon when needed.
 
-## Loading data into Python
+## Loading Data into Python
 
 To begin processing the metabric dataset, we need to load it into Python.
 We can do that using a library called
@@ -323,7 +323,7 @@ This approach works for any other method or attribute of the `DataFrame` class.
 
 ::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
 
-## Try it yourself — Summaries with describe() and info()
+## Challenge: Summaries with `describe()` and `info()`
 
 `DataFrame.describe()` and `DataFrame.info()` are two simple, fast ways to learn about the variables in a dataframe. Before running the code, open the help pages to see the available options and to understand what each method returns.
 
@@ -426,7 +426,7 @@ If you get an error when using `.loc[]` or `.iloc[]`, check that you are using t
 
 Selecting a single value is the foundation for more advanced data selection and manipulation in Pandas. It allows you to extract specific measurements, check entries, and build up to more complex operations.
 
-### Slicing data
+### Slicing Data
 
 Previously we selected a single value from our dataframe,
 but we can select whole sections as well.
@@ -466,7 +466,7 @@ The above example selects rows 0 through 2 and columns 24 through to the end of 
 
 ::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
 
-## ## Try it yourself
+## Challenge: Slicing Data with Labels
 
 Repeat the previous three data selection tasks, but this time use the `.loc[]` accessor instead of `.iloc[]`.
 

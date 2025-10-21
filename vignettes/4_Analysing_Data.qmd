@@ -24,20 +24,285 @@ keypoints:
 
 {{< include ../_includes/header.qmd >}}
 
+Words tell a story; statistics help us check whether that story fits the data. Once the Metabric data are loaded and labelled, the next step is to turn questions into short, reproducible operations: filter the rows you care about, pick the variables that answer the question, and apply the right summary or comparison.
 
 
+Before we can analyze patient data, we need to load it into Python in a way that makes it easy to work with. Let’s load the Metabric patient data and set the patient ID as the index, so rows are labelled meaningfully. If you already have `metabric_patients` in memory from a previous episode, you can reuse it; otherwise, run the following to (re)load it:
 
 ```{python}
 import pandas as pd
-# Option 1: set the index while reading the CSV
+
 metabric_patients = pd.read_csv(
-'https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv',
-index_col='Patient_ID'
+    'https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv',
+    index_col='Patient_ID'
 )
 ```
 
+## Statistics on Data
 
-## Analyzing data
+Before jumping into complex models, we start by describing the data. Descriptive statistics answer simple questions like “what is typical?” and “how much do values vary?” These summaries help you build intuition and spot problems early (e.g., unexpected scales or missing values).
+
+The pandas library provides a wide range of statistical functions and methods to compute summary statistics for your data. Below provides some of the key statistical measures you can compute using this library. 
+
+#### 1) Mean 
+
+Mean (*average*) of a single column (one variable):
+
+```{python}
+metabric_patients.loc[:, 'Survival_time'].mean()
+```
+
+This answers “on average, what is the value of this variable?” Here we use the `Survival_time` column.
+
+Mean of all numeric columns (column-wise):
+
+```{python}
+metabric_patients.mean(numeric_only = True)
+```
+
+This computes the mean for each numeric column independently, giving you a quick overview of typical values across the dataset.
+
+::: {.callout-note}
+## Why `numeric_only=True`?
+
+Many DataFrames mix numeric columns (like Tumour_size) with non-numeric columns (like Patient_ID or Cohort labels). Adding `numeric_only=True` tells pandas to ignore non-numeric columns when computing a statistic across the whole DataFrame. This avoids errors or confusing results. For a single numeric column (e.g., `metabric_patients.loc[:, 'Survival_time']`), you don’t need this argument; it’s most helpful for DataFrame-wide operations.
+:::
+
+Mean across each row:
+
+```{python}
+metabric_patients.mean(axis=1, numeric_only=True)
+```
+
+
+This treats each row as a small collection of values and averages across columns. It only makes sense when the columns you include are on a comparable scale (for example, a set of related measurements). The `axis=1` argument tells Pandas to compute across columns for each row.
+
+::: {.callout-note}
+## Understanding `axis=`
+
+- `axis=0` (default) means “by column”: compute one result per column across rows.
+- `axis=1` means “by row”: compute one result per row across columns.
+
+Most reducers (`sum`, `mean`, `min`, `max`, etc.) accept `axis=` and follow the same pattern.
+:::
+
+#### 2) Median
+
+The median (*robust "typical" value*) is the middle value when data are sorted. It is not affected by extreme values (outliers) and is often used to describe the central tendency of data. 
+
+```{python}
+metabric_patients.median(numeric_only = True)
+```
+
+Visualising mean vs median:
+
+```{python}
+#| echo: false
+import matplotlib.pyplot as plt
+
+# choose a numeric column to visualise
+vals = metabric_patients.loc[:, 'Tumour_size'].dropna()
+
+plt.figure(figsize=(6, 3.5))
+plt.hist(vals, bins=30, color='#8ecae6', edgecolor='white')
+plt.axvline(vals.mean(), color='#d62828', linestyle='--', linewidth=2, label='Mean')
+plt.axvline(vals.median(), color='#f77f00', linestyle='-', linewidth=2, label='Median')
+plt.title('Tumour size distribution')
+plt.xlabel('Tumour size')
+plt.ylabel('Count')
+plt.legend()
+plt.tight_layout()
+```
+
+The mean pulls toward extreme values more than the median. In skewed distributions, the two lines will sit apart.
+
+####  3) Standard Deviation 
+
+The standard deviation (*spread around the mean*) measures the amount of variation or dispersion in a dataset. A lower standard deviation indicates that data points are close to the mean, while a higher standard deviation indicates greater variability. 
+
+```{python}
+metabric_patients.std(numeric_only = True)
+```
+
+#### 4) Variance 
+
+Variance (*spread in squared units*) is the square of the standard deviation. It quantifies how much individual data points deviate from the mean. It’s useful mathematically, but note its units are squared (e.g., cm² if the original variable is in cm). 
+
+```{python}
+metabric_patients.var(numeric_only = True)
+```
+
+#### 7) Sum 
+
+Use `.sum()` to add up values.
+
+Total for each numeric column (column-wise):
+
+```{python}
+metabric_patients.sum(numeric_only = True)
+```
+
+Total for a single column (e.g., Mutation_count across all patients):
+
+```{python}
+metabric_patients.loc[:, 'Mutation_count'].sum()
+```
+
+If you ever sum across rows (`axis=1`), be sure the columns are on comparable scales.
+
+Row-wise sum of selected numeric columns (use with care):
+
+```{python}
+metabric_patients.loc[:, 'ESR1':'MLPH'].sum(axis = 1, numeric_only = True)
+```
+
+What the output shows
+
+- DataFrame sum (no `axis=` given): a Series (one total per numeric column).
+- Single-column sum: a single number.
+- Row-wise sum (`axis=1`): a Series indexed by row labels (one total per patient).
+
+#### 8) Count 
+
+Use `.count()` to count non-missing values. This is helpful to see how complete each column is.
+
+Count of non-missing values for each column:
+
+```{python}
+metabric_patients.count()
+```
+
+This returns the counts or the number of entries excluding missing values for each column in the dataframe. 
+
+Count of non-missing values for a single column:
+
+```{python}
+metabric_patients.loc[:, 'Survival_status'].count()
+```
+
+This returns a single number - non-missing entries in the Survival_status column.
+
+#### 9) Frequency of Values 
+
+Use `value_counts()` to see how often values appear.
+
+```{python}
+metabric_patients.value_counts()
+```
+
+Each index is a unique combination of column values across the dataframe. The value is how many rows match that exact combination. Scroll horizontally to check the value column. Since there are no duplicate rows, the value will always be 1 in this example. 
+
+For a specific column (e.g., Survival_status):
+
+```{python}
+metabric_patients.loc[:, '3-gene_classifier'].value_counts()
+```
+
+For a single column, this returns an index with unique values in the column (i.e., category names) and the values are their counts. In the above example, there are four categories. 
+
+By default, missing values (represented as `NaN`, which stands for "Not a Number") are excluded from the result. This means that only rows with actual, non-missing values are counted in the frequency table. If you want to include missing values as their own category in the output, you can pass the argument `dropna=False` to `value_counts()`. This will show how many times `NaN` appears in the column, which is useful for quickly assessing the amount of missing data in a categorical variable.
+
+For example:
+
+```{python}
+metabric_patients.loc[:, '3-gene_classifier'].value_counts(dropna=False)
+```
+
+
+Here is a quick reference summary table of common useful functions.
+
+```{=html}
+<table>
+  <thead>
+    <tr>
+      <th>Function</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><code>count</code></td>
+      <td>Number of non-NA observations</td>
+    </tr>
+    <tr>
+      <td align="center"><code>sum</code></td>
+      <td>Sum of values</td>
+    </tr>
+    <tr>
+      <td align="center"><code>mean</code></td>
+      <td>Mean of values</td>
+    </tr>
+    <tr>
+      <td align="center"><code>median</code></td>
+      <td>Arithmetic median of values</td>
+    </tr>
+    <tr>
+      <td align="center"><code>min</code></td>
+      <td>Minimum</td>
+    </tr>
+    <tr>
+      <td align="center"><code>max</code></td>
+      <td>Maximum</td>
+    </tr>
+    <tr>
+      <td align="center"><code>mode</code></td>
+      <td>Mode</td>
+    </tr>
+    <tr>
+      <td align="center"><code>abs</code></td>
+      <td>Absolute Value</td>
+    </tr>
+    <tr>
+      <td align="center"><code>prod</code></td>
+      <td>Product of values</td>
+    </tr>
+    <tr>
+      <td align="center"><code>std</code></td>
+      <td>Bessel-corrected sample standard deviation</td>
+    </tr>
+    <tr>
+      <td align="center"><code>var</code></td>
+      <td>Unbiased variance</td>
+    </tr>
+    <tr>
+      <td align="center"><code>sem</code></td>
+      <td>Standard error of the mean</td>
+    </tr>
+    <tr>
+      <td align="center"><code>skew</code></td>
+      <td>Sample skewness (3rd moment)</td>
+    </tr>
+    <tr>
+      <td align="center"><code>kurt</code></td>
+      <td>Sample kurtosis (4th moment)</td>
+    </tr>
+    <tr>
+      <td align="center"><code>quantile</code></td>
+      <td>Sample quantile (value at %)</td>
+    </tr>
+    <tr>
+      <td align="center"><code>cumsum</code></td>
+      <td>Cumulative sum</td>
+    </tr>
+    <tr>
+      <td align="center"><code>cumprod</code></td>
+      <td>Cumulative product</td>
+    </tr>
+    <tr>
+      <td align="center"><code>cummax</code></td>
+      <td>Cumulative maximum</td>
+    </tr>
+    <tr>
+      <td align="center"><code>cummin</code></td>
+      <td>Cumulative minimum</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+In summary, descriptive statistics provide a powerful first look at your data, helping you understand its central tendencies, variability, and completeness. By using functions like `mean`, `median`, `std`, and `value_counts`, you can quickly identify patterns, spot anomalies, and prepare your dataset for deeper analysis. Mastering these basic tools in pandas will make your data exploration more efficient and insightful.
+
+## Analyzing Data
 
 Usually you won't just print a slice. You'll use it in a calculation. All the statistical operators that work on entire DataFrames work the same way on slices.
 
@@ -59,7 +324,7 @@ print(metabric_patients.loc["MB-0000":"MB-0906", "Mutation_count"].min())
 
 Here `min` and `max` are [functions](../learners/reference.md#function). 
 
-### Selecting rows with conditions
+### Selecting Rows with Conditions
 
 Often the clearest way to explore a dataset is to pick a question and translate it into a short filter. For example: "Which patients have more than 25 mutations?", "Which older patients have small tumours?", or "Which rows belong to Cohort 1?" In Pandas you express those questions as comparisons on columns.
 
@@ -110,7 +375,7 @@ selected_patients
 
 ::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
 
-## Try it yourself 
+## Challenge: Slicing with Conditions
 
 Find the maximum tumour size among patients in Cohort '1'. Write code that:
 

@@ -57,7 +57,7 @@ This means that, for example:
 - `weight0` is a valid variable name, whereas `0weight` is not
 - `weight` and `Weight` are different variables
 
-## Types of data
+## Types of Data
 
 Python knows various types of data. Three common ones are:
 
@@ -96,7 +96,7 @@ We might decide to add a prefix to our patient identifier:
 patient_id = 'MB-' + patient_id
 ```
 
-## Built-in Python functions
+## Built-in Python Functions
 
 To carry out common tasks with data and variables in Python,
 the language provides us with several built-in [functions](../learners/reference.md#function).
@@ -260,7 +260,7 @@ it is not updated when we change `weight_kg`.
 
 ::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
 
-## Check Your Understanding
+## Challenge: Check Your Understanding
 
 What values do the variables `mass` and `age` have after each of the following statements?
 Test your answer by executing the lines.
@@ -294,7 +294,7 @@ print(age)
 
 ::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
 
-## Sorting Out References
+## Challenge: Sorting Out References
 
 Python allows you to assign multiple values to multiple variables in one line by separating
 the variables and values with commas. What does the following program print out?
@@ -324,7 +324,7 @@ print(third, fourth)
 
 ::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
 
-## Seeing Data Types
+## Challenge: Seeing Data Types
 
 What are the data types of the following variables?
 
@@ -355,6 +355,7 @@ print(type(distance))
 
 
 {{< include ../_includes/footer.qmd >}}
+
 ---
 <table style="width: 100%; border: none;">
   <tr>

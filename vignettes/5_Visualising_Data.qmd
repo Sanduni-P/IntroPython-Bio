@@ -36,10 +36,10 @@ First, we will import the `pyplot` module from matplotlib.
 import matplotlib.pyplot as plt
 ```
 
-## Loading data for visualisation
+## Loading Data for Visualisation
 
 We’ll use the same Metabric patient data we loaded earlier. Let’s load it and set the
-patient ID as the index so rows are labelled meaningfully. If you already have `metabric_patients`
+patient ID as the index, so rows are labelled meaningfully. If you already have `metabric_patients`
 in memory from a previous episode, you can reuse it; otherwise, run the following to (re)load it:
 
 ```{python}
@@ -308,7 +308,6 @@ plt.title("GATA3 vs ESR1 with grid")
 
 # Turn on light dashed grid lines behind the points
 plt.grid(True, which="major", axis="both", linestyle="--", linewidth=0.5, alpha=0.4)
-plt.gca().set_axisbelow(True)  # ensure grid is drawn beneath markers
 ```
 
 Tips and variants:
