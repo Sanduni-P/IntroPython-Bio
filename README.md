@@ -36,10 +36,7 @@ We excluded observations for patient tumor samples lacking expression data, resu
 
 This content was adapted from the following course materials:
 
- - [R for Data Science book](https://r4ds.had.co.nz/index.html)
- - [OHI Data Science Training](http://ohi-science.org/data-science-training/index.html)
- - [Data Carpentry](https://datacarpentry.org)
- - [WEHI tidyr coursebook](https://bookdown.org/ansellbr/WEHI_tidyR_course_book/) by Brendan R. E. Ansell
- - content developed by Maria Doyle.
+-   [OHI Data Science Training](http://ohi-science.org/data-science-training/index.html)
+-   [Plotting and Programming in Python](https://swcarpentry.github.io/python-novice-gapminder/)
 
 ------------------------------------------------------------------------
