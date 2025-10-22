@@ -77,7 +77,7 @@ anaconda-navigator
 
 Once Python is installed, choose an interface to write and run code. We recommend either **Jupyter Notebook** (classic) or **JupyterLab** (the newer, more flexible interface). Both run locally in your browser and work well for this workshop.
 
-#### Install Jupyter Notebook (classic)
+#### Install Jupyter Notebook (Classic)
 
 - Open Anaconda Navigator and install Jupyter Notebook.
 - Launch Jupyter Notebook from Anaconda Navigator, or start it from a terminal:
@@ -93,10 +93,10 @@ jupyter notebook
 
 **Resources:**
 
-- Installing: https://docs.jupyter.org/en/latest/install.html
-- Docs: https://jupyter-notebook.readthedocs.io/en/latest/
+- [Installation guide](https://docs.jupyter.org/en/latest/install.html)
+- [Documentation](https://jupyter-notebook.readthedocs.io/en/latest/)
 
-#### Install JupyterLab (recommended)
+#### Install JupyterLab (Recommended)
 
 - In Anaconda Navigator, install JupyterLab and click Launch; or start it from a terminal:
 
@@ -109,8 +109,8 @@ jupyter lab
 
 **Resources:**
 
-- Getting started: https://jupyterlab.readthedocs.io/en/stable/
-- Overview: https://jupyterlab.readthedocs.io/en/stable/getting_started/overview.html
+- [Getting started](https://jupyterlab.readthedocs.io/en/stable/)
+- [Overview](https://jupyterlab.readthedocs.io/en/stable/getting_started/overview.html)
 
 Either Notebook or JupyterLab is fine for this workshop. Pick the one you prefer. If you're new and want a modern UI, try JupyterLab.
 
@@ -122,7 +122,7 @@ Either Notebook or JupyterLab is fine for this workshop. Pick the one you prefer
 
 ### Step 3: Installing a Python library
 
-If you are currently using Python using conda (or Anaconda) or if you are using the cluster, a Python library can be installed with Anaconda or Miniconda. For example, to install the `pandas`, `numpy` and `matplotlib` libraries of Python use the following command on the terminal.
+If you are currently using Python using conda (or Anaconda), a Python library can be installed with Anaconda or Miniconda. For example, to install the `pandas`, `numpy` and `matplotlib` libraries of Python use the following command on the terminal.
 
 ```{python} 
 #| eval: false
