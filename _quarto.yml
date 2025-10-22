@@ -35,6 +35,5 @@ format:
     code-copy: hover
     df-print: kable
 
-jupyter: quarto-bio
 execute:
   cache: false

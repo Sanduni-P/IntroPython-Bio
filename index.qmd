@@ -73,25 +73,46 @@ anaconda-navigator
 -   [Getting started with Navigator](https://docs.anaconda.com/free/navigator/getting-started/)
 -   [How to create/manage environments?](https://www.anaconda.com/docs/getting-started/working-with-conda/environments)
 
-### Step 2: Installing Interactive Computing Environment (ICE)
+### Step 2: Installing an Interactive Computing Environment (ICE)
 
-Once Python is installed, the next step is to install a preferred ICE to start coding with Python. If you are a new user, we suggest using the **Jupyter Notebook**. 
+Once Python is installed, choose an interface to write and run code. We recommend either **Jupyter Notebook** (classic) or **JupyterLab** (the newer, more flexible interface). Both run locally in your browser and work well for this workshop.
 
-#### Install Jupyter Notebook on your own computer
+#### Install Jupyter Notebook (classic)
 
--   Open Anaconda Navigator and click install Jupyter Notebook.
--   Launch the Jupyter Notebook directly from the Anaconda Navigator or start the notebook server from the command line by typing the following command.
+- Open Anaconda Navigator and install Jupyter Notebook.
+- Launch Jupyter Notebook from Anaconda Navigator, or start it from a terminal:
 
-```{python} 
+```{python}
 #| eval: false
-jupyter notebook 
+jupyter notebook
 ```
 
--   You should see the notebook home page open in your web browser.
+- Your browser will open the Notebook home page.
 
 ![Figure 2: Jupyter Notebook](vignettes/images/jupyter-notebook.png)
 
--   To install Jupyter Notebook, see [Installing Jupyter Notebook](https://docs.jupyter.org/en/latest/install.html).
+**Resources:**
+
+- Installing: https://docs.jupyter.org/en/latest/install.html
+- Docs: https://jupyter-notebook.readthedocs.io/en/latest/
+
+#### Install JupyterLab (recommended)
+
+- In Anaconda Navigator, install JupyterLab and click Launch; or start it from a terminal:
+
+```{python}
+#| eval: false
+jupyter lab
+```
+
+- JupyterLab provides tabs, file browser, terminals, and more in one interface. It opens in your default web browser.
+
+**Resources:**
+
+- Getting started: https://jupyterlab.readthedocs.io/en/stable/
+- Overview: https://jupyterlab.readthedocs.io/en/stable/getting_started/overview.html
+
+Either Notebook or JupyterLab is fine for this workshop. Pick the one you prefer. If you're new and want a modern UI, try JupyterLab.
 
 **Useful links:**
 
@@ -188,10 +209,7 @@ The following table illustrates the column names and descriptions of the metabri
 
 This content was adapted from the following course materials:
 
--   [R for Data Science book](https://r4ds.had.co.nz/index.html)
 -   [OHI Data Science Training](http://ohi-science.org/data-science-training/index.html)
--   [Data Carpentry](https://datacarpentry.org)
--   [WEHI tidyr coursebook](https://bookdown.org/ansellbr/WEHI_tidyR_course_book/) by Brendan R. E. Ansell
--   Content developed by Maria Doyle.
+-   [Plotting and Programming in Python](https://swcarpentry.github.io/python-novice-gapminder/)
 
 ------------------------------------------------------------------------

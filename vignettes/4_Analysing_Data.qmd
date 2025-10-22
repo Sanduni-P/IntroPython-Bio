@@ -3,19 +3,19 @@ title: "Analysing Patient Data"
 teaching: 40
 exercises: 20
 questions:
-- How can I process tabular data files in Python?
+- How do I summarize and compare patient data in Python?
 objectives:
-- Explain what a library is and what libraries are used for.
-- Import a Python library and use the functions it contains.
-- Read tabular data from a file into a program.
-- Select individual values and subsections from data.
-- Perform operations on arrays of data.
+- Describe data with simple summaries (average, median, spread, totals, and counts).
+- Choose whether to summarize across columns or across rows.
+- Filter the dataset using conditions and summarize just those rows.
+- Handle missing values so results are trustworthy.
+- Explore categories.
 keypoints:
-- 'Describe data with pandas: `mean`, `median`, `std`, `var`, `sum`, `count`, `value_counts`.'
-- Use `numeric_only=True` for DataFrame-wide reductions and `axis=` to switch between column-wise (`axis=0`) and row-wise (`axis=1`).
-- Combine boolean masks with summaries to analyze filtered subsets.
-- Handle missing data with `dropna()`; reorder results with `sort_index()`/`reindex()` and `sort_values()`/`reset_index()`.
-- Explore categories with `unique()` and summarize groups with `groupby()`.
+- Compute common summaries (mean, median, std, var, sum, count, value_counts).
+- Switch between column-wise and row-wise operations with `axis=` and use `numeric_only` for mixed dtypes.
+- Filter rows with boolean masks and summarize subsets.
+- Handle missing values with `dropna()` when appropriate.
+- Explore categories with `unique()`.
 ---
 
 {{< include ../_includes/header.qmd >}}
@@ -293,6 +293,67 @@ print('\nMinimum for Mutation_count column for cohort 1 patients:')
 print(metabric_patients.loc[cohort_mask, "Mutation_count"].min())
 ```
 
+
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Challenge: Summaries for Breast Invasive Ductal Carcinoma (IDC)
+
+Build a small workflow that focuses on a clinically defined subset and its gene expression profile.
+
+1. Create a boolean mask for patients whose `Cancer_type` is "Breast Invasive Ductal Carcinoma" (IDC).
+2. Using that mask, select only the expression columns for those patients. 
+3. Compute column-wise summaries across patients for the expression columns:
+    - Mean for each gene
+    - Median for each gene
+    
+4. Compute a left-to-right cumulative sum across the expression columns for each patient. In each row, the final expression column should equal the total (sum) across all genes for that patient.
+
+:::
+
+::: {.callout-tip collapse="true" icon="false"}
+
+## Hints
+- In this dataset the expression columns starts at the `ESR1` column and runs to the end of the table.
+- Use `.eq('Breast Invasive Ductal Carcinoma')` or `== 'Breast Invasive Ductal Carcinoma'` to build the mask.
+- Column-wise summaries are the default (`axis=0`), row-wise requires `axis=1`.
+
+:::
+
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Solution
+
+```{python}
+# 1) Mask for IDC patients
+cancer_type_mask = metabric_patients.loc[:, 'Cancer_type'] == 'Breast Invasive Ductal Carcinoma'
+```
+
+```{python}
+# 2) Expression-only slice for IDC patients (from ESR1 to end)
+expr_idc = metabric_patients.loc[cancer_type_mask, 'ESR1':]
+expr_idc
+```
+
+```{python}
+# 3) Column-wise summaries (one value per gene)
+expr_means = expr_idc.mean()      # axis=0 by default
+expr_means
+```
+
+```{python}
+expr_medians = expr_idc.median()  # axis=0 by default
+expr_medians
+```
+
+```{python}
+# 4) Row-wise cumulative sums (one row per patient, accumulating across genes)
+expr_cumsum_per_patient = expr_idc.cumsum(axis=1)
+```
+
+:::
+
+
 ## Useful Helper Functions
 
 Before plotting or building more complex summaries, a few small helpers make your life easier. These tools don’t change the meaning of your data—they help you clean rows, control order, and ask focused questions. After each command, check what changed: the values, the order, the labels, or the row count.
@@ -313,6 +374,31 @@ print('Rows after dropna:', len(subset))
 
 You’ll see the original row count and a smaller count after `dropna()` command. The `subset` DataFrame keeps only rows where both columns are present. By default, rows are dropped if any of the specified columns are missing. To drop columns instead of rows, use `axis=1`. To control which columns are checked, pass `subset=[...]` (as above).
 
+### Unique Values
+
+When you’re exploring categorical columns, a first sanity check is to list which labels actually appear. This helps you spot typos ("Lum a" vs "LumA"), unexpected categories, or missing values before you count or plot. Pandas provides `.unique()` for this: it returns the distinct values observed in a column.
+
+`unique()` returns an array of the distinct values. If the column contains missing values (`NaN`), they will be included in the result. Use `dropna()` first if you want to exclude missing values from the listing.
+
+```{python}
+metabric_patients.loc[:, '3-gene_classifier'].unique()
+```
+
+```{python}
+# Distinct labels, excluding missing entries
+metabric_patients.loc[:, '3-gene_classifier'].dropna().unique()
+```
+
+The order of the output is based on first appearance in the column; it’s not alphabetical. If you want you can sort the categories as follows: 
+
+```{python}
+labels = metabric_patients.loc[:, '3-gene_classifier'].dropna().unique()
+sorted_labels = sorted(labels)
+sorted_labels
+```
+
+Listing the set of categories is often followed by asking “how many of each?”. To get a frequency table see the Frequency of Values section below. 
+
 ### Frequency of Values 
 
 To inspect how often each distinct value appears in a column, use `value_counts()`. This is particularly helpful for categorical variables (for example, labels) to check balance, spot rare categories, and reveal unexpected or missing labels. By default it returns counts sorted by frequency.
@@ -329,7 +415,7 @@ For a specific column (e.g., `3-gene_classifier`):
 metabric_patients.loc[:, '3-gene_classifier'].value_counts()
 ```
 
-When used on a single column, `value_counts()` returns a single column dataframe (or Series) where the index lists each unique value (such as category names) and the corresponding values show how many times each occurs. In the example above, you’ll see four categories and their respective counts.
+When used on a single column, `value_counts()` returns a Series where the index lists each unique value (such as category names) and the corresponding values show how many times each occurs. In the example above, you’ll see four categories and their respective counts.
 
 Set `normalize=True` to display proportions (percentages) rather than raw counts.
 
@@ -381,35 +467,73 @@ If a label from `desired` is missing in the data, it is simply omitted from the 
 
 
 
-### Sorting numeric values (and resetting the index)
+::: {.callout-note .challenge-callout icon="false" style="border-left: 4px solid #ffc107;"}
 
-Use `sort_values()` to order numeric values. After sorting a Series, the original row labels (patient IDs) stay attached. Use `reset_index(drop=True)` if you want a clean 0..N-1 index for display.
+## Challenge: Summarize Categories (Cellularity)
+
+1) List the unique labels in `Cellularity`:
+   - Excluding missing values
+   - Including missing values
+
+2) Show `Cellularity` label counts with:
+   - Raw counts (include and exclude missing values)
+   - Percentages 
+   - Alphabetical order 
+
+3) How many patients have High cellularity but no recorded 3-gene classifier? (i.e., missing value in 3-gene classifier column)
+
+:::
 
 
-To order values from low to high, use `sort_values()`. After sorting a Series, the original row labels stay attached; use `reset_index(drop=True)` to create a clean 0..N-1 index.
+::: {.callout-tip collapse="true" icon="false"}
+
+## Hints
+
+- To count rows, use `.shape[0]` or `len(...)`.
+- “No recorded 3-gene classifier” means missing values. 
+- Use `.shape[0]` to get number of rows.
+- Patients with high cellularity but no recorded 3-gene classifier = patients with high cellularity and all records in 3-gene classifier - patients with high cellularity and non missing values in 3-gene classifier.
+
+:::
+
+
+::: {.callout-tip .solution-callout collapse="true" icon="false" style="border-left: 4px solid #ffc107;"}
+
+## Solution
 
 ```{python}
-ages = metabric_patients.loc[:, 'Age_at_diagnosis']
-ages_sorted = ages.sort_values()
-ages_sorted_head = ages_sorted.reset_index(drop=True).head()
-ages_sorted_head
+# 1) Unique labels
+metabric_patients.loc[:, 'Cellularity'].unique()
+metabric_patients.loc[:, 'Cellularity'].dropna().unique()
 ```
-
-What the output shows
-
-- `ages_sorted` keeps the original labels so you can trace back to the patient.
-- After `reset_index(drop=True)`, the result starts at 0, which is handy for quick previews or exporting.
-
-### Unique Values
-
-Use `unique()` to list the distinct values observed. This returns a NumPy array. For a tidy display order, wrap with `sorted(...)`.
 
 ```{python}
-metabric_patients.loc[:, '3-gene_classifier'].dropna().unique()
-# Tip: sorted(...) if you want them ordered for display
-# sorted(metabric_patients.loc[:, '3-gene_classifier'].dropna().unique())
+# 2) Label counts
+metabric_patients.loc[:, 'Cellularity'].value_counts(dropna=False)
+metabric_patients.loc[:, 'Cellularity'].value_counts()
+metabric_patients.loc[:, 'Cellularity'].value_counts(normalize=True) * 100
+metabric_patients.loc[:, 'Cellularity'].value_counts().sort_index()
 ```
 
+
+```{python}
+# 3) mask for high cellularity
+mask_cell = metabric_patients.loc[:, 'Cellularity'] == 'High'
+# no. of patients with high cellularity 
+n_cell = metabric_patients.loc[mask_cell, '3-gene_classifier'].shape[0]
+# no. of patients with high cellularity and non-missing values in 3-gene_classifier
+n_cell_3gene = metabric_patients.loc[mask_cell, '3-gene_classifier'].dropna().shape[0]
+# no. of patients with high cellularity and missing values in 3-gene_classifier
+n_cell - n_cell_3gene
+```
+
+```{python}
+# 3) Patients with High cellularity and NO recorded 3-gene classifier
+mask_cell_high = metabric_patients.loc[:, 'Cellularity'].eq('High')
+no_classifier_count = metabric_patients.loc[mask_cell_high, '3-gene_classifier'].isna().sum()
+no_classifier_count
+```
+:::
 
 {{< include ../_includes/footer.qmd >}}
 
@@ -417,12 +541,11 @@ metabric_patients.loc[:, '3-gene_classifier'].dropna().unique()
 <table style="width: 100%; border: none;">
   <tr>
     <td style="text-align: left; width: 50%;">
-        [← Previous](../vignettes/4_Analysing_Data.qmd)
+        [← Previous](../vignettes/3_Loading_Data.qmd)
     </td>
     <td style="text-align: right; width: 50%;">
       [Next →](../vignettes/5_Visualising_Data.qmd)
     </td>
   </tr>
 </table>
-
 

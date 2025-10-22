@@ -9,7 +9,11 @@ questions:
 - "Can I change the value associated with a variable after I create it?"
 - "How can I get help while learning to program?"
 objectives:
-- "Assign values to variables."
+- Recognize common data types (integers, floats, strings).
+- Assign and update variables to store values.
+- Display values and add simple comments.
+- Call built‑in functions and check a value’s type.
+- Use help and read error messages to troubleshoot.
 keypoints:
 - Basic data types in Python include integers, strings, and floating-point numbers.
 - Use `variable = value` to assign a value to a variable in order to record it in memory.

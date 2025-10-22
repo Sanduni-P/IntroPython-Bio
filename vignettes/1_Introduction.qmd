@@ -3,9 +3,8 @@ title: "Getting Started with Jupyter Notebook"
 teaching: 25
 exercises: 15
 questions:
-- "How do I use Jupyter Notebook for Python programming?"
-- "What are the different cell types and how do I use them?"
-- "How can I efficiently navigate and edit in Jupyter Notebook?"
+- How do I use JupyterLab/Notebook to run Python?
+- How do I write, run, and document code in notebooks?
 objectives:
 - Launch the JupyterLab server.
 - Create a new Python script.
@@ -537,7 +536,7 @@ Practice closing and restarting the JupyterLab server.
 <table style="width: 100%; border: none;">
   <tr>
     <td style="text-align: right; width: 50%;">
-      [Next →](../vignettes/2_Intro_pandas.qmd)
+      [Next →](../vignettes/2_Intro_Python.qmd)
     </td>
   </tr>
 </table>

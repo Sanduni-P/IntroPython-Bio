@@ -392,7 +392,13 @@ Create a scatter plot of ESR1 expression vs Nottingham prognostic index as shown
 
 ![](images/scatter_esr1_vs_npi.png)
 
-*Hint: Use the "inferno" colormap, set marker size to 25, and transparency (alpha) to 0.6. Colour points by Nottingham prognostic index.*
+:::
+
+::: {.callout-tip collapse="true" icon="false"}
+
+## Hints
+
+Use the "inferno" colormap, set marker size to 25, and transparency (alpha) to 0.6. Colour points by Nottingham prognostic index.*
 
 :::
 
@@ -485,7 +491,11 @@ plt.tight_layout()
 
 Create a bar chart of patient counts by cancer type, then add a fill colour and a contrasting edge colour to make the bars stand out.
 
-*Hints:*
+:::
+
+::: {.callout-tip collapse="true" icon="false"}
+
+## Hints
 
 - Use the `color=` keyword to set the bar fill.
 - Use `edgecolor=` to set the bar borders and `linewidth=` to control border thickness.
@@ -605,7 +615,26 @@ plt.tight_layout()
 
 Here, `plt.plot(...)` command plots a cumulative distribution or a simple line plot. `range(1, len(ages_sorted) + 1)` creates a sequence of integers starting at 1 up to the number of ages. It’s often used to represent the rank or position of each age in the sorted list. It plots each age (on the x-axis) against its rank (on the y-axis). This is useful for visualizing the distribution of ages, such as a cumulative frequency plot.
 
-If `ages_sorted` isn’t sorted, the plot won’t show a proper cumulative distribution. If you want the y-axis to show percentages, you’d need to normalize the ranks.
+To order values from low to high, use `sort_values()`. After sorting, the original row labels stay attached; use `reset_index(drop=True)` to create a clean 0..N-1 index.
+
+::: {.callout-warning icon="false" collapse="true"}
+
+## Unsorted Ages
+
+If you skip sorting, the x-values are out of order and the line no longer represents a cumulative curve.
+
+```{python}
+plt.plot(ages.values, range(1, len(ages) + 1))
+plt.xlabel("Age at diagnosis")
+plt.ylabel("Patient index")
+plt.title("Age at diagnosis (unsorted)")
+plt.tight_layout()
+```
+
+:::
+
+
+If you want the y-axis to show percentages, you’d need to normalize the ranks.
 
 To add colour and style:
 
@@ -616,7 +645,6 @@ plt.ylabel("Patient index (sorted by age)")
 plt.title("Age at diagnosis (styled line)")
 plt.grid(linestyle=":", alpha=0.4)
 ```
-
 
 
 We covered fundamental plots you’ll use often, but Matplotlib supports many more: histograms, kernel‑density curves, violin/strip plots, heatmaps, contour maps, time‑series with date axes, 3D plots, annotations, and much more. The best way to learn is to browse examples and adapt them to your data.

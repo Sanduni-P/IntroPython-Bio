@@ -3,13 +3,13 @@ title: "Loading and Viewing Patient Data"
 teaching: 60
 exercises: 20
 questions:
-- How can I process tabular data files in Python?
+- How do I load and view tabular data in Python?
 objectives:
 - Explain what a library is and what libraries are used for.
 - Import a Python library and use the functions it contains.
 - Read tabular data from a file into a program.
 - Select individual values and subsections from data.
-- Perform operations on arrays of data.
+- Filter rows using simple conditions.
 keypoints:
 - Import a library into a program using `import libraryname`.
 - Load data with `pd.read_csv(...)` and set a meaningful index.
@@ -74,7 +74,7 @@ Once we've imported the library, we can ask the library to read our data file fo
 pd.read_csv("path_to_file.csv")
 
 # read a text file with values separated by spaces
-pd.read_csv(filepath_or_buffer="path_to_file.txt", delimeter=' ')
+pd.read_csv(filepath_or_buffer="path_to_file.txt", delimiter=' ')
 ```
 
 You can also load data directly from a URL (web link) as follows:
@@ -550,7 +550,13 @@ selected_patients
 2. Use that mask to select the `Tumour_size` column and run `.describe()`; read the “max” value from the summary.
 3. Build a second mask to find the patient(s) in Cohort 1 whose `Tumour_size` equals that maximum, and display those rows (at least show `Tumour_size`).
 
-*Hint: When you call `.describe()` on a single column (a Series), the result is another Series. You can access the maximum value using `summary['max']` or `summary.loc['max']`. Since you're working with a single column, you don't need to specify the column name in `.loc[]`.*
+:::
+
+::: {.callout-tip collapse="true" icon="false"}
+
+## Hints
+
+When you call `.describe()` on a single column (a Series), the result is another Series. You can access the maximum value using `summary['max']` or `summary.loc['max']`. Since you're working with a single column, you don't need to specify the column name in `.loc[]`.*
 
 :::
 
@@ -580,6 +586,7 @@ We first filter rows with a boolean mask (`Cohort == 1`). The `.describe()` summ
 {{< include ../_includes/footer.qmd >}}
 
 ---
+
 <table style="width: 100%; border: none;">
   <tr>
     <td style="text-align: left; width: 50%;">
