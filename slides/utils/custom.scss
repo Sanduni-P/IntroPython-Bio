@@ -1,0 +1,39 @@
+
+/*-- scss:defaults --*/
+
+$presentation-heading-color: #4A97D1;
+$presentation-font-size-root: 40px !default;
+
+.reveal .subtitle {
+    font-size: 1.8em;
+    color: #54AAB7;
+}
+
+.reveal .title {
+    font-size: 2.0em;
+}
+
+/*-- scss:rules --*/
+.reveal section h1 {
+  color: #3439A3;
+  font-size: 1.8em !important;
+
+}
+
+.reveal section h2 {
+  color: #296DD4;
+    font-size: 1.4em !important;
+}
+
+.reveal section h3 {
+  color: #4996D3;
+}
+
+.reveal section h4 {
+  color: #4492B4;
+}
+
+.reveal section h5 {
+  color: #72B57D;
+}
+

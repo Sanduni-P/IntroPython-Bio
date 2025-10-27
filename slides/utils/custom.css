@@ -1,0 +1,139 @@
+.landing {
+  border: 1mm solid;
+  padding: 20px;
+  border-color: #8FCBEB;
+}
+
+.sidebar-title {
+  font-size: 2.1rem;
+  font-weight: 500;
+  line-height: 2.2rem;
+  color: #34398B;
+}
+
+.aa-Autocomplete .aa-Form, .aa-DetachedFormContainer .aa-Form {
+  background-color: white;
+  border: 2px solid #8FCBEB;
+}
+.sidebar-navigation .sidebar-item {
+  font-size: 1.25rem;
+  font-weight: 300;
+}
+
+.nav-page .nav-page-text, .sidebar-navigation .sidebar-section .sidebar-item {
+  font-size: 1.15rem;
+}
+
+.scrolling {
+  max-height: 680px;
+  width: 100%;
+  overflow-y: auto;
+  font-size: 14pt;
+  margin-bottom: 10px;
+}
+
+.helpscroll {
+  max-height: 400px;
+  overflow-y: auto;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #949698;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.remote-code {
+  background-color: #EEEBFF;
+  border-left: 4px solid #77447F;
+  border-radius: 6px;
+  margin-bottom: 0 !important;
+  padding-bottom: 0em !important;
+  display: block;
+  line-height: 1.4; /* avoid excess spacing inside */
+}
+
+.local-code {
+  background-color: #E2F0F9;
+  border-left: 4px solid #498EC8;
+  border-radius: 6px;
+  margin-bottom: 0 !important;
+  padding-bottom: 0em !important;
+  display: block;
+  line-height: 1.4; /* avoid excess spacing inside */
+}
+
+/* Challenge callout styling */
+.challenge-callout .callout-header {
+  background-color: #ffc107 !important;
+  color: #000 !important;
+  padding: 10px 10px !important;
+  font-weight: 600 !important;
+}
+
+.challenge-callout .callout-header .callout-title {
+  font-size: 1.2em !important;
+  margin: 0 !important;
+}
+
+/* Solution callout styling */
+.solution-callout .callout-header {
+  background-color: #ffc107 !important;
+  color: #000 !important;
+  padding: 6px 10px !important;
+  font-weight: 500 !important;
+}
+
+.solution-callout .callout-body {
+  margin-top: 0 !important;
+  padding-top: 1rem !important;
+}
+
+/* Center all figures and images in reveal.js slides */
+
+/* Center containers that Quarto/reveal use for figures */
+.reveal .slides figure,
+.reveal .slides .quarto-figure,
+.reveal .slides .figure {
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* Center images whether standalone or inside figure wrappers */
+.reveal .slides figure img,
+.reveal .slides .quarto-figure img,
+.reveal .slides p > img,
+.reveal .slides img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* Ensure captions are centered */
+.reveal .slides figure figcaption,
+.reveal .slides .quarto-figure .quarto-figure-caption,
+.reveal .slides figcaption,
+.quarto-figure-caption,
+.figure .caption {
+	text-align: center;
+}
+
+/* Optional: paragraphs that only contain an image should not left-align it */
+/* This helps in cases where the image is wrapped in a <p> without figure */
+/* Supported in modern browsers; safe fallback handled by block-level img above */
+/*
+.reveal .slides p:has(> img) {
+  text-align: center;
+}
+*/
+
+/* Adjust font size of pandas DataFrame HTML outputs in slides */
+.reveal .slides table.dataframe,
+.reveal .slides .quarto-table-container table.dataframe {
+  font-size: 0.6em; /* increase/decrease as needed for readability */
+}
+
+.reveal .slides table.dataframe th,
+.reveal .slides table.dataframe td {
+  padding: 0.25em 0.5em; /* slightly tighter cell padding for slide space */
+}

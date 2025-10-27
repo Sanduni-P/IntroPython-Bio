@@ -1,0 +1,2596 @@
+---
+title: "Introduction to Python"
+author: "Sanduni Rajapaksa, Peter Mac"
+format:
+  revealjs:
+    theme: [default, utils/custom.scss]
+    css: utils/custom.css
+    slide-number: true
+    transition: fade
+    overview: true
+    controls: true
+    progress: true
+    code-overflow: wrap
+    fig-align: center
+    width: 1440
+    height: 810
+execute: 
+  echo: true
+---
+
+## Learning Objectives
+
+- Load tabular data with pandas
+- Calculate basic statistics (e.g., mean, median)
+- Filter and slice data by clinical features
+- Produce plots (scatter, boxplots, bar/line) with matplotlib
+- Adjust plot appearance (labels, titles, grids, styles)
+
+---
+
+## The Data: METABRIC (Breast Cancer)
+
+- 2,509 primary breast tumours (METABRIC study)
+- Clinical data + gene expression (microarrays)
+- Copy number (SNP arrays) and targeted sequencing of 173 genes
+- We use a cleaned subset (rows with expression present)
+
+**References:**
+
+-   [Curtis *et al.*, Nature 486:346-52, 2012](https://pubmed.ncbi.nlm.nih.gov/22522925)
+-   [Pereira *et al.*, Nature Communications 7:11479, 2016](https://www.ncbi.nlm.nih.gov/pubmed/27161491)
+-   [cBioPortal](https://www.cbioportal.org/study/summary?id=brca_metabric)
+
+---
+
+## METABRIC Dataset Metadata
+
+::: scrolling
+```{=html}
+<table class="no-spacing" cellspacing="0" >
+  <caption>Description of column names in the metabric dataset</caption>
+  <thead>
+    <tr>
+      <th>Column Name</th>
+      <th style="padding-left: 120px; " >Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Patient_ID</td>	<td>Identifier to uniquely specify a patient.</td></tr>
+    <tr><td>Cohort</td>	<td>Study group or cohort to which the patient belongs.</td></tr>
+    <tr><td>Age_at_diagnosis</td>	<td>Age at Diagnosis</td></tr>
+    <tr><td>Survival_time/Os_Months</td>	<td>Overall survival in months since initial diagnosis.</td></tr>
+    <tr><td>Survival_status/Os_Status</td>	<td>Overall patient survival status.</td></tr>
+    <tr><td>Vital_status</td>	<td>The survival state of the person.</td></tr>
+    <tr><td>Chemotherapy</td>	<td>Chemotherapy.</td></tr>
+    <tr><td>RadioTherapy</td>	<td>RadioTherapy</td></tr>
+    <tr><td>Tumor_size</td>	<td>Tumor size in mm.</td></tr>
+    <tr><td>Tumor_stage</td>	<td>Tumor stage.</td></tr>
+    <tr><td>Neoplasm_histologic_grade/Grade</td>	<td>Numeric value to express the degree of abnormality of cancer cells, a measure of differentiation and aggressiveness.</td></tr>
+    <tr><td>Lymph_nodes_examined_positive</td>	<td>Number of lymph nodes positive</td></tr>
+    <tr><td>Lymph_nodes_status</td> <td>Lymph nodes status</td></tr>
+    <tr><td>Cancer_type</td>	<td>Cancer Type</td></tr>
+    <tr><td>ER_status</td>	<td>ER Status measured by IHC</td></tr>
+    <tr><td>PR_Status</td>	<td>PR Status</td></tr>
+    <tr><td>HER2_status</td>	<td>HER2 Status</td></tr>
+    <tr><td>HER2_status_measured_by_SNP6</td>	<td>HER2 status measured by SNP6</td></tr>
+    <tr><td>PAM50</td>	<td>Pam50 + Claudin-low subtype.</td></tr>
+    <tr><td>3-gene_classifier</td>	<td>3-Gene classifier subtype</td></tr>
+    <tr><td>Nottingham_prognostic_index</td>	<td>Nottingham prognostic index</td></tr>
+    <tr><td>Cellularity</td>	<td>Tumor Content</td></tr>
+    <tr><td>Integrative_cluster</td>	<td>Integrative Cluster</td></tr>
+    <tr><td>Mutation_count</td>	<td>Mutation count</td></tr>
+    <tr><td>ESR1</td>	<td>ESR1 Expression data</td></tr>
+    <tr><td>ERBB2</td>	<td>ERBB2 Expression data</td></tr>
+    <tr><td>PGR</td>	<td>PGR Expression data</td></tr>
+    <tr><td>TP53</td>	<td>TP53 Expression data</td></tr>
+    <tr><td>PIK3CA</td>	<td>PIK3CA Expression data</td></tr>
+    <tr><td>GATA3</td>	<td>GATA3 Expression data</td></tr>
+    <tr><td>FOXA1</td>	<td>FOXA1 Expression data</td></tr>
+    <tr><td>MLPH</td>	<td>MLPH Expression data</td></tr>
+  </tbody>
+</table>
+```
+:::
+
+
+# Getting Started with Jupyter Notebook
+
+- Launch the JupyterLab server.
+- Create a new Python script.
+- Create a Jupyter notebook.
+- Shutdown the JupyterLab server.
+- Understand the difference between a Python script and a Jupyter notebook.
+- Create Markdown cells in a notebook.
+- Create and run Python cells in a notebook.
+
+---
+
+## Why JupyterLab/Notebooks?
+
+- You can easily type, edit, and copy and paste blocks of code.
+- Tab complete allows you to easily access the names of things you are using
+  and learn more about them.
+- It allows you to annotate your code with links, different sized text, bullets, etc.
+- It allows you to display figures next to the code.
+- Run code and see results inline.
+- Great for data exploration and teaching.
+- Shareable: notebooks render on GitHub and export to many formats.
+
+---
+
+## JupyterLab vs Jupyter Notebook
+
+- Both run the same `.ipynb` notebooks with the same Python kernel
+- JupyterLab is the next‑generation interface:
+  - Multi‑panel layout (tabs, split views), file browser, terminals, consoles
+  - Rich extensions and more flexible workspace
+- Classic Notebook is simpler:
+  - Single‑document view, minimal UI, fewer built‑ins
+- Shortcuts and cell types (Code/Markdown) are largely the same
+- No migration needed: open the same notebook files in either interface
+
+---
+
+## Other Ways to Run Python
+
+- IDEs: 
+    - VS Code
+    - PyCharm
+- Editors: Vim/Emacs
+
+---
+
+## Starting JupyterLab — Anaconda Navigator
+
+- Launch Anaconda Navigator
+- Click "Launch" under JupyterLab
+- Browser opens at local JupyterLab address
+
+![](../vignettes/images/0_anaconda_navigator_landing_page.png){width=80%}
+
+
+---
+
+## JupyterLab Landing Page
+
+- File browser on the left
+- Launcher in Main Work Area
+- Create notebooks, text files, terminals, consoles
+
+![](../vignettes/images/0_jupyterlab_landing_page.png){width=50%}
+
+---
+
+## Interface: Menu Bar
+
+
+![](../vignettes/images/0_jupyterlab_menu_bar.png){width=80%}
+
+
+- **File:** Actions related to files and directories such as *New*, *Open*, *Close*, *Save*, etc. The *File* menu also includes the *Shut Down* action used to shutdown the JupyterLab server.
+- **Edit:** Actions related to editing documents and other activities such as *Undo*, *Cut*, *Copy*, *Paste*, etc.
+- **View:** Actions that alter the appearance of JupyterLab.
+
+---
+
+## Interface: Menu Bar
+
+
+- **Run:** Actions for running code in different activities such as notebooks and code consoles (discussed below).
+- **Kernel:** Actions for managing kernels. Kernels in Jupyter will be explained in more detail below.
+- **Tabs:** A list of the open documents and activities in the main work area.
+- **Settings:** Common JupyterLab settings can be configured using this menu. There is also an *Advanced Settings Editor* option in the dropdown menu that provides more fine-grained control of JupyterLab settings and configuration options.
+- **Help:** A list of JupyterLab and kernel help links.
+
+---
+
+## Kernels
+
+- "Separate processes started by the server that runs your code in different programming languages and environments."
+- When we open a Jupyter Notebook, that starts a kernel - a process - that is going to run the code.
+- We'll be using the Jupyter ipython kernel - lets us run Python 3 code interactively
+- Using other Jupyter - let us write and execute code in other programming languages in the same JupyterLab interface, like R, Java, Julia, Ruby, JavaScript, Fortran, etc.
+
+---
+
+## Interface: Left Sidebar
+
+- File browser, running kernels, command palette, open tabs
+- Collapse/expand from View menu or sidebar tabs
+
+
+![](../vignettes/images/0_jupyterlab_left_side_bar.png){width=20%}
+
+
+---
+
+## Interface: Main Work Area
+
+- Arrange notebooks, editors, terminals in tabs/panels
+- Drag to split left/right/top/bottom
+- Current tab marked by colored top border
+
+
+![](../vignettes/images/0_jupyterlab_main_work_area.png){width=50%}
+
+
+---
+
+## Create a Python Script
+
+- Launcher → Other → Text File (or File → New → Text File)
+- Save As with `.py` extension to make it a Python script
+- Convention, not a requirement — but widely used
+
+---
+
+## Create a Jupyter Notebook
+
+- Launcher → Notebook → Python 3
+- Or File → New → Notebook
+- Notebooks save as `.ipynb` files
+
+
+![](../vignettes/images/new-notebook.png){width=50%}
+
+
+---
+
+## Open a Jupyter Notebook
+
+- Open the `IntroPython.ipynb` notebook
+
+![](../vignettes/images/intropython-notebook.png)
+
+## Notebook Modes
+
+- Edit mode (blue border): type/edit cell content. Press Enter or clicking inside a cell. 
+
+  ![](../vignettes/images/mode-edit.png){width=40%}
+
+- Command mode (grey border): manage cells (add/delete/move/type). Press Esc.
+
+  ![](../vignettes/images/mode-command.png){width=40%}
+
+- Toggle Edit/Command: Enter / Esc
+
+---
+
+## Useful Shortcuts (Command Mode)
+
+- A / B: insert cell Above / Below
+- X / C / V: cut / copy / paste cell
+- D, D: delete cell
+- Z: undo last cell operation
+- H or Help → Keyboard Shortcuts for full list
+
+![](../vignettes/images/keyboard-shortcuts.png){width=40%}
+
+---
+
+## Run and Save
+
+- Run current cell: Shift + Enter
+- Run without moving: Ctrl + Enter (Mac: Cmd + Enter)
+- Run and insert below: Alt/Option + Enter
+- Save: Ctrl + S (Mac: Cmd + S)
+
+---
+
+## Markdown in Notebooks
+
+- Use Markdown for headings, lists, links, images, inline code
+- Keep narrative near the code it explains
+- Change cell type: Esc then M (Markdown), Esc then Y (Code)
+
+![](../vignettes/images/cell-type.png){width=50%}
+
+
+---
+
+## Challenge: Creating Lists in Markdown
+
+Create a nested list in a Markdown cell in a notebook that looks like this:
+
+
+1.  Get funding.
+2.  Do work.
+    *   Design experiment.
+    *   Collect data.
+    *   Analyze.
+3.  Write up.
+4.  Publish.
+
+---
+
+## Solution
+
+```
+1. Get funding.
+2. Do work.
+
+  - Design experiment.
+  - Collect data.
+  - Analyze.
+
+3. Write up.
+4. Publish.
+```
+
+
+---
+
+## Solution
+
+Python returns the output of the last calculation.
+
+```python
+3
+```
+
+---
+
+## Change an Existing Cell from Code to Markdown
+
+What happens if you write some Python in a code cell
+and then you switch it to a Markdown cell?
+For example,
+put the following in a code cell:
+
+```python
+x = 6 * 7 + 12
+print(x)
+```
+
+And then run it with Shift\+Enter to be sure that it works as a code cell.
+Now go back to the cell and use Esc then m to switch the cell to Markdown
+and "run" it with Shift\+Enter.
+
+What happened and how might this be useful?
+
+---
+
+## Solution
+
+The Python code gets treated like Markdown text.
+The lines appear as if they are part of one contiguous paragraph.
+This could be useful to temporarily turn on and off cells in notebooks that get used for multiple purposes.
+
+```python
+x = 6 * 7 + 12 print(x)
+```
+
+---
+
+## Closing JupyterLab
+
+- File → Shut Down → confirm to stop server (save first)
+- To restart later, run `jupyter lab` again in a shell
+
+---
+
+## Questions?
+
+- Next: Python fundamentals and working with data
+- We’ll build on these Jupyter basics
+
+
+# Python Fundamentals
+
+- Recognize common data types (integers, floats, strings).
+- Assign and update variables to store values.
+- Display values and add simple comments.
+- Call built‑in functions and check a value’s type.
+- Use help and read error messages to troubleshoot.
+
+---
+
+
+## Python as a Calculator
+
+Any Python interpreter can be used as a calculator:
+
+```{python}
+#| echo: true
+3 + 5 * 4
+```
+
+- This is great but not very interesting.
+- To do anything useful with data, we need to assign its value to a *variable*.
+In Python, we can assign a value to a
+variable, using the equals sign `=`.
+
+---
+
+## Variables 
+
+We can track the weight of a patient who weighs 60 kilograms by
+assigning the value `60` to a variable `weight_kg`:
+
+```{python}
+#| echo: true
+weight_kg = 60
+```
+
+From now on, whenever we use `weight_kg`, Python will substitute the value we assigned to
+it. In layperson's terms, **a variable is a name for a value**.
+
+---
+
+## Variable Names
+
+In Python, variable names:
+
+- can include letters, digits, and underscores
+- cannot start with a digit
+- are [case sensitive](reference.md#case-sensitive).
+
+This means that, for example:
+
+- `weight0` is a valid variable name, whereas `0weight` is not
+- `weight` and `Weight` are different variables
+
+---
+
+## Types of Data
+
+Python knows various types of data. Three common ones are:
+
+- integer numbers
+- floating point numbers, and
+- strings.
+
+---
+
+## Floating Point
+
+- In the example above, variable `weight_kg` has an integer value of `60`.
+- If we want to more precisely track the weight of our patient,
+we can use a floating point value by executing:
+
+```{python}
+#| echo: true
+weight_kg = 60.3
+```
+
+---
+
+## String
+
+- To create a string, we add single or double quotes around some text.
+- To identify and track a patient throughout our study, we can assign each person a unique identifier by storing it in a string:
+
+```{python}
+patient_id = '0001'
+```
+
+---
+
+## Using Variables in Python
+
+- Once we have data stored with variable names, we can make use of it in calculations.
+- We may want to store our patient's weight in pounds as well as kilograms:
+
+```{python}
+weight_lb = 2.2 * weight_kg
+```
+
+- We might decide to add a prefix to our patient identifier:
+
+```{python}
+patient_id = 'MB-' + patient_id
+```
+
+---
+
+## Comment in Python
+
+- Use `#` for single-line or end-of-line comments — Python ignores everything after `#`
+- Keep comments brief and explain the "why" rather than repeating the code
+
+```{python}
+weight_kg = 65.0   # patient weight in kilograms
+height_m = 1.70    # patient height in meters
+```
+
+---
+
+## Built-in Python Functions
+
+- To carry out common tasks with data and variables in Python, the language provides us with several built-in functions.
+- To display information to the screen, we use the `print` function:
+
+```{python}
+print(weight_lb)
+print(patient_id)
+```
+
+- When we want to make use of a function, referred to as calling the function,
+we follow its name by parentheses. The parentheses are important:
+if you leave them off, the function doesn't actually run!
+- Sometimes you will include values or variables inside the parentheses for the function to use.
+
+---
+
+## Print Function
+
+- We can display multiple things at once using only one `print` call:
+
+```{python}
+print(patient_id, 'weight in kilograms:', weight_kg)
+```
+
+- We can also call a function inside of another function call.
+
+- Python has a built-in function called `type` that tells you a value's data type:
+
+```{python}
+print(type(60.3))
+print(type(patient_id))
+```
+
+---
+
+## Print Function
+
+- We can do arithmetic with variables right inside the `print` function:
+
+```{python}
+print('weight in pounds:', 2.2 * weight_kg)
+```
+
+
+- The above command, however, did not change the value of `weight_kg`:
+
+```{python}
+print(weight_kg)
+```
+
+- To change the value of the `weight_kg` variable, we have to
+**assign** `weight_kg` a new value using the equals `=` sign:
+
+```{python}
+weight_kg = 65.0
+print('weight in kilograms is now:', weight_kg)
+```
+
+---
+
+## Variables as Sticky Notes
+
+- A variable is like a sticky note labeling a value
+- Assigning puts the label (name) on a particular value
+
+![](../vignettes/images/python-sticky-note-variables-01.svg){fig-align="center" height="100pt"}
+
+---
+
+## Variables as Sticky Notes Example {auto-animate=true}
+
+```{.python code-line-numbers="1,1"}
+weight_kg = 65.0
+# There are 2.2 pounds per kilogram
+weight_lb = 2.2 * weight_kg
+print('weight in kilograms:', weight_kg, 'and in pounds:', weight_lb)
+weight_kg = 100.0
+print('weight in kilograms is now:', weight_kg, 'and weight in pounds is still:', weight_lb)
+```
+
+![](../vignettes/images/python-sticky-note-variables-01.svg){fig-align="center" height="100pt"}
+
+---
+
+## Variables as Sticky Notes Example {auto-animate=true}
+
+```{.python code-line-numbers="1,3"}
+weight_kg = 65.0
+# There are 2.2 pounds per kilogram
+weight_lb = 2.2 * weight_kg
+print('weight in kilograms:', weight_kg, 'and in pounds:', weight_lb)
+weight_kg = 100.0
+print('weight in kilograms is now:', weight_kg, 'and weight in pounds is still:', weight_lb)
+```
+
+![](../vignettes/images/python-sticky-note-variables-02.svg){fig-align="center" height="100pt"}
+
+- Compute pounds from kilograms once; each name labels its own value
+- Labels don’t imply a live link between values
+
+---
+
+## Variables as Sticky Notes Example {auto-animate=true}
+
+```{.python code-line-numbers="1,3,5"}
+weight_kg = 65.0
+# There are 2.2 pounds per kilogram
+weight_lb = 2.2 * weight_kg
+print('weight in kilograms:', weight_kg, 'and in pounds:', weight_lb)
+weight_kg = 100.0
+print('weight in kilograms is now:', weight_kg, 'and weight in pounds is still:', weight_lb)
+```
+
+![](../vignettes/images/python-sticky-note-variables-03.svg){fig-align="center" height="100pt"}
+
+- Reassigning `weight_kg` updates that label’s value only
+- `weight_lb` stays the same because it doesn’t “remember” its origin
+
+---
+
+## Getting Help
+
+Use the built-in function `help` to get help for a function.
+Every built-in function has extensive [documentation that can also be found online](https://docs.python.org/3/library/index.html).
+
+```{python}
+help(print)
+```
+
+- This help message (the function's "docstring") includes a usage statement, a list of parameters accepted by the function, and their default values if they have them.
+
+---
+
+## Debugging — Quick tips
+
+- Read the error message: check the last line (exception) and where it occurred
+- Search the web with the exact error text + "python"
+- Use StackOverflow: review accepted/upvoted answers and comments
+- Be careful copying code — understand what it does before using it
+- Ask a colleague/mentor with the error and a minimal example
+
+---
+
+## Generative AI — Key Points
+
+- Different from Q&A sites: chatbots generate the most likely next text, not human-authored answers
+- Useful for guidance but not always reliable — verify accuracy and logic
+- You need foundational skills to assess outputs and fix errors
+- Common uses: generate/extend/refactor code, translate between languages, suggest search terms
+- Risks: reflects training data biases/inaccuracies; data licensing/consent concerns
+- Environmental impact: higher energy and water usage (see AI Environmental Impact Primer)
+- Takeaway: use critically and cite sources; double-check results
+
+---
+
+## Why avoid GenAI during this Workshop?
+
+- Most beginner issues are solved faster by standard web search and docs
+- Build core skills first so you can evaluate and correct AI-generated code later
+- Early success with novice questions can be misleading about AI reliability for advanced tasks
+
+---
+
+## Challenge: Check Your Understanding
+
+What values do the variables `mass` and `age` have after each of the following statements?
+Test your answer by executing the lines.
+
+```{python}
+#| eval: false
+mass = 47.5
+age = 122
+mass = mass * 2.0
+age = age - 20
+```
+
+---
+
+## Solution
+
+```{python}
+mass = 47.5
+age = 122
+mass = mass * 2.0
+age = age - 20
+print(mass)
+print(age)
+```
+
+---
+
+## Challenge: Sorting Out References
+
+Python allows you to assign multiple values to multiple variables in one line by separating
+the variables and values with commas. What does the following program print out?
+
+```{python}
+#| eval: false
+first, second = 'Grace', 'Hopper'
+third, fourth = second, first
+print(third, fourth)
+```
+
+
+---
+
+## Solution
+
+
+```{python}
+#| echo: false
+first, second = 'Grace', 'Hopper'
+third, fourth = second, first
+print(third, fourth)
+```
+
+---
+
+## Challenge: Seeing Data Types
+
+What are the data types of the following variables?
+
+```{python}
+#| eval: false
+planet = 'Earth'
+apples = 5
+distance = 10.5
+```
+
+---
+
+## Solution
+
+```{python}
+planet = 'Earth'
+apples = 5
+distance = 10.5
+
+print(type(planet))
+print(type(apples))
+print(type(distance))
+```
+
+
+
+# Loading and Viewing Patient Data
+
+- Import and use libraries (Pandas) for tabular data
+- Read CSV from file or URL into a DataFrame
+- Set a meaningful index (e.g., Patient_ID)
+- Preview structure with head/tail/shape/index/columns/dtypes
+- Select by position (iloc) and by labels (loc)
+- Filter rows using simple conditions
+
+---
+
+## Importing a Library
+
+- Libraries extend core Python with powerful tools
+- Pandas is the go‑to library for data tables (DataFrames)
+
+```{python}
+import pandas as pd
+```
+
+- Importing a library is like getting a piece of lab equipment out of a storage locker and setting it
+up on the bench.
+
+---
+
+## Library Documentation 
+
+- To open the help documentation of Pandas library we loaded as `pd`
+
+```{python}
+help(pd)  # open package help (scrollable in notebooks)
+```
+
+---
+
+## Read CSV Data
+
+- From a local file path:
+
+```{python}
+#| eval: false
+import pandas as pd
+pd.read_csv("path_to_file.csv")
+```
+
+- From a plain‑text file with a custom delimiter:
+
+```{python}
+#| eval: false
+pd.read_csv(filepath_or_buffer="path_to_file.txt", delimiter=' ')
+```
+
+- Directly from a URL:
+```{python}
+#| eval: false
+pd.read_csv("https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv")
+```
+
+---
+
+## Function Call - `read_csv()`
+
+- The expression `pd.read_csv(...)` is a function call.
+- Asks Python to run the function `read_csv` which belongs to the `pd` library (i.e., Pandas library).
+- The dot notation in Python is used most of all as an object attribute/property specifier or for invoking its method. `object_name.method()` will invoke on object\_name method.
+
+- `pd.read_csv` has two parameters: 
+    - the name of the file or a URL 
+    - delimiter that separates values on a line. 
+- These both need to be character strings, so we put them in quotes.
+
+## Loading METABRIC Dataset
+
+```{python}
+pd.read_csv("https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv")
+```
+
+- This outputs the data we just loaded.
+- By default, only a few rows and columns are shown (with `...` to omit elements when displaying big dataframes).
+- Our call to `pd.read_csv` read our file but didn't save the data in memory.
+
+---
+
+## Store the DataFrame in a Variable
+
+- Save the loaded table to work with it later
+
+```{python}
+metabric = pd.read_csv(
+    "https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv"
+)
+print(metabric)
+print(type(metabric))  
+```
+
+
+---
+
+## DataFrame
+
+- `DataFrame` is a 2-dimensional labelled data structure.
+- It's like a spreadsheet or SQL table. 
+- Columns are the observed variables, and the rows are the observations.
+
+![](../vignettes/images/dataframe.png)
+
+---
+
+## Set a Meaningful Index (Patient_ID)
+
+- Option 1: set the index during read
+
+```{python}
+#| eval: false
+metabric_patients = pd.read_csv(
+  "https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv",
+  index_col='Patient_ID'
+)
+```
+
+- Option 2: set the index after read
+
+```{python}
+#| eval: false
+metabric = pd.read_csv("https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv")
+metabric_patients = metabric.set_index('Patient_ID')
+```
+
+---
+
+```{python}
+#| echo: false
+metabric_patients = pd.read_csv(
+  "https://zenodo.org/record/6450144/files/metabric_clinical_and_expression_data.csv",
+  index_col='Patient_ID'
+)
+```
+
+```{python}
+metabric_patients
+```
+
+---
+
+## Documentation for DataFrame
+
+- To open the help documentation of DataFrame:
+
+```{python}
+#| eval: false
+help(pd.DataFrame)
+help(metabric_patients)
+metabric_patients?
+```
+
+::: scrolling
+
+```{python}
+#| echo: false
+help(pd.DataFrame)
+```
+:::
+
+---
+
+## Viewing Data
+
+- The `DataFrame` class offers multiple methods to view and interact with data. 
+
+---
+
+### `head()`
+
+- The `head()` method is called using dot notation: you write the variable name, followed by a dot, then the method name with parentheses. 
+
+```{python}
+#| eval: false
+metabric_patients.head()
+```
+
+- By default, `head()` returns the first 5 rows of the DataFrame. 
+- Helpful for checking that your data loaded correctly, seeing what columns are present, and getting a sense of the values in your dataset. 
+- You can pass a number as an argument, like `metabric_patients.head(10)` to see the first 10 rows.
+
+---
+
+### `head()`
+
+```{python}
+metabric_patients.head()
+```
+
+---
+
+### `tail()`
+
+- To view the last few rows of your data, you can use the `tail()` method. 
+- Useful when you want to check the end of your dataset. 
+- For example, to see if any rows are missing, or to inspect the most recent entries.
+- By default, `tail()` returns the last 5 rows. 
+- You can specify a different number if you wish, such as `metabric_patients.tail(10)` to see the last 10 rows.
+
+---
+
+### `tail()`
+
+```{python}
+metabric_patients.tail()
+```
+
+---
+
+## Members — Key Points
+
+- DataFrames have attributes ("members") that describe them, e.g. `shape`, `index`, `columns`, `dtypes`
+- Access attributes with dot notation: `object.attribute`
+- Example: `metabric_patients.shape` returns a tuple `(rows, cols)`
+- Attributes vs methods: attributes have no parentheses; methods do (`metabric_patients.head()`)
+
+---
+
+## Shape
+
+- To get the **shape** of the DataFrame (i.e., the number of rows and columns), use:
+
+```{python}
+metabric_patients.shape
+```
+
+- The output tells us that the `metabric_patients` dataframe variable contains 1904 rows and 32 columns. 
+
+---
+
+## Index 
+
+- Every DataFrame has an index that labels each row.
+- If none is provided, Pandas creates a default RangeIndex starting at 0 up to the number of rows minus one. 
+- Since we changed the index to use patient IDs, each row is now labeled by its corresponding patient identifier:
+
+```{python}
+metabric_patients.index
+```
+
+- You can view the current index with `metabric_patients.index`
+- A labelled index enables convenient label-based selection with `.loc`
+
+---
+
+## Columns
+
+- To view the column names of your dataframe: 
+
+```{python}
+metabric_patients.columns
+```
+
+- This shows all the available fields in your dataset.
+- Helpful for selecting columns in later analysis.
+
+---
+
+## Column Data Types
+
+- Each column in a dataframe can hold a different type of data, such as numbers or text. 
+- The `dtypes` attribute shows you the data type for each column, so you can quickly see which columns contain integers, floating-point numbers, or strings. 
+
+```{python}
+metabric_patients.dtypes
+```
+
+---
+
+## Getting Help with DataFrames
+
+- To open the help page for any method in the `DataFrame` class:
+
+```{python}
+#| eval: false
+import pandas as pd
+help(pd.DataFrame.method_name)
+```
+
+- For example, to open the help page for `DataFrame.head()`:
+
+```{python}
+#| eval: false
+import pandas as pd
+help(pd.DataFrame.head)  
+# or help(pandas.DataFrame.head)
+```
+
+---
+
+## Challenge: Summaries with `describe()` and `info()`
+
+`DataFrame.describe()` and `DataFrame.info()` are two simple, fast ways to learn about the variables in a dataframe. Before running the code, open the help pages to see the available options and to understand what each method returns.
+
+1. Use `help(pd.DataFrame.describe)` and `help(pd.DataFrame.info)` (or the `?` shortcut in a Jupyter environment) to inspect the methods.
+2. Run `.describe()` and `.info()` on the dataframe you loaded.
+3. Take notes: which columns are numeric, what are the reported counts, and which columns contain missing values (if any)?
+
+---
+
+## Solution
+
+```{python}
+#| eval: false
+help(pd.DataFrame.describe)
+help(pd.DataFrame.info)
+```
+
+```{python}
+print(metabric_patients.describe())
+```
+
+- When you call `.describe()` you'll see a table of summary statistics for each numeric column: count, mean, std, min, 25%, 50% (median), 75%, and max. 
+- Use these values to spot outliers (very large or small max/min), check typical scales (mean/median), and confirm there are expected number of observations (count).
+
+---
+
+## Solution
+
+```{python}
+print(metabric_patients.info())
+```
+
+- `.info()` prints a compact summary: the index dtype and range, number of entries, column names, non-null counts and dtypes for each column, and memory usage. 
+- The non-null counts help spot missing data. If a column's non-null count is smaller than the number of rows, then the column has missing values.
+
+---
+
+## Selecting a Single Value — Key Points
+
+- To retrieve one value from the dataframe, specify both row and column.
+- Each row has two identifiers:
+  1. position (0‑based integer)
+  2. label (index value, e.g., `MB-0005`)
+- Each column has two identifiers:
+  1. position (0‑based integer)
+  2. label (column name, e.g., `Age_at_diagnosis`)
+- To access a value at the position `[i,j]` of a DataFrame, there's two accessors:
+  - `iloc` selects by integer position
+  - `loc` selects by labels (index and column names)
+
+![](../vignettes/images/selectdata.png)
+
+---
+
+### Use `DataFrame.iloc[..., ...]` to select values by their (entry) position
+
+- The `.iloc[]` accessor selects data by integer position. 
+- This is useful when you want to select by row and column number, starting from 0.
+
+![](../vignettes/images/loc0.png)
+
+```{python}
+# Select the value in the first row and first column
+first_value = metabric_patients.iloc[0, 0]
+print('First value in DataFrame:', first_value)
+```
+
+---
+
+### Use `DataFrame.iloc[..., ...]` to select values by their (entry) position
+
+- You can also select any value by specifying its row and column index:
+
+```{python}
+# Select value at row 30, column 5
+middle_value = metabric_patients.iloc[29, 4]
+print('Value at row 30, column 5:', middle_value)
+```
+
+- For a large dataset this is not very useful, since you often don't know the row or column indices. 
+- Instead, it's better to use column names and row labels with `.loc[]`.
+
+---
+
+### Use `DataFrame.loc[..., ...]` to select values by their (entry) label.
+
+- The `.loc[]` accessor selects data by row and column labels (names). 
+
+![](../vignettes/images/loc1.png)
+
+For example, if you want to select the value for the patient `MB-0000` in the column 'age_at_diagnosis':
+
+```{python}
+# Select the value in row with label 0 and column 'age_at_diagnosis'
+age_value = metabric_patients.loc['MB-0000', 'Age_at_diagnosis']
+print('Age at diagnosis for first patient:', age_value)
+```
+
+---
+
+## `iloc()` vs `loc[]`
+::: {.callout-tip}
+If you get an error when using `.loc[]` or `.iloc[]`, check that you are using the correct labels or integer positions. Remember, Python counts from 0!
+:::
+
+---
+
+### Slicing Data
+
+- To select the first ten columns of values for the first four patients (rows):
+
+```{python}
+metabric_patients.iloc[0:4, 0:10]
+```
+
+- The slice `0:4` means, "Start at index 0 and go up to, but not including, index 4". 
+
+---
+
+### Slicing Data
+
+- We don't have to start slices at 0:
+
+```{python}
+metabric_patients.iloc[5:10, 0:10]
+```
+
+---
+
+### Slicing Data
+
+- We also don't have to include the upper and lower bound on the slice.  
+- If we don't include the lower
+bound, Python uses 0 by default.
+- If we don't include the upper, the slice runs to the end of the
+axis.
+- If we don't include either (i.e., if we use ':' on its own), the slice includes
+everything:
+
+```{python}
+small = metabric_patients.iloc[:3, 24:]
+print('small is:')
+print(small)
+```
+
+
+---
+
+## Challenge: Slicing Data with Labels
+
+Repeat the previous three data selection tasks, but this time use the `.loc[]` accessor instead of `.iloc[]`.
+
+---
+
+## Solution
+
+```{python}
+metabric_patients.loc['MB-0000':'MB-0006', "Cohort":"Tumour_stage"]
+```
+
+- Notice that in this example, we have selected a range of columns by specifying their names from "Cohort" to "Tumour_stage". 
+- Similarly, we have used a range of patient IDs to select multiple rows. 
+
+---
+
+## Solution
+
+```{python}
+metabric_patients.loc["MB-0010":"MB-0035", "Cohort":"Tumour_stage"]
+```
+
+- **Slicing using `.loc[]` is inclusive at both ends**, which differs from **slicing using `.iloc[]`**, where slicing indicates everything up to but not including the final index.
+
+---
+
+## Solution
+
+```{python}
+small = metabric_patients.loc[:"MB-0005", "ERBB2":]
+print('small is:')
+print(small)
+```
+
+
+---
+
+### Selecting Rows with Conditions (Boolean Masks)
+
+- The clearest way to explore a dataset is to pick a question and translate it into a short filter. 
+- For example: 
+    - *Which patients have more than 25 mutations?*
+    - *Which older patients have small tumours?*
+    - *Which rows belong to Cohort 1?*
+
+---
+
+### Selecting Rows with Conditions
+
+1. First, extract the `Mutation_count` column:
+
+```{python}
+mutation_data = metabric_patients.loc[:, "Mutation_count"]
+mutation_data
+```
+
+---
+
+### Selecting Rows with Conditions
+
+2. Then, check which rows have more than 25 mutations:
+```{python}
+mask = mutation_data > 25
+mask
+```
+
+- This returns a similarly-shaped dataframe of True/False values. 
+- This is often called a boolean mask because it 'masks' the rows that match the condition.
+
+---
+
+### Selecting Rows with Conditions
+
+- You can use that mask to filter matching rows:
+
+```{python}
+mutation_data[mask]
+```
+
+---
+
+- Or apply the same mask to the DataFrame to show the corresponding rows (or a specific set of columns):
+
+```{python}
+metabric_patients.loc[mask, 'Mutation_count':]
+```
+
+---
+
+### Summary on Filtered Rows
+
+- You can then run summary methods on the filtered rows, for example:
+
+```{python}
+print(metabric_patients.loc[mask, 'Mutation_count':].describe())
+```
+
+---
+
+### Filter Rows
+
+- Find patients who have a tumour size smaller than 5 mm and who were diagnosed at age 50 or older.
+
+```{python}
+#| eval: false
+# mask for tumours size (in mm) < 5
+tumour_mask = metabric_patients.loc[:, 'Tumour_size'] < 5
+
+# mask for age at diagnosis >= 50
+age_mask = metabric_patients.loc[:, 'Age_at_diagnosis'] >= 50
+
+# select rows that satisfy both conditions
+selected_patients = metabric_patients.loc[tumour_mask & age_mask, :]
+selected_patients
+```
+
+---
+
+### Filter Rows
+
+- Find patients who have a tumour size smaller than 5 mm and who were diagnosed at age 50 or older.
+
+```{python}
+#| echo: false
+# mask for tumours size (in mm) < 5
+tumour_mask = metabric_patients.loc[:, 'Tumour_size'] < 5
+
+# mask for age at diagnosis >= 50
+age_mask = metabric_patients.loc[:, 'Age_at_diagnosis'] >= 50
+
+# select rows that satisfy both conditions
+selected_patients = metabric_patients.loc[tumour_mask & age_mask, :]
+selected_patients
+```
+
+---
+
+## Challenge: Find the patient with the maximum tumour size
+
+1. Create a boolean mask for patients in Cohort 1.
+2. Use that mask to select the `Tumour_size` column and run `.describe()`; read the “max” value from the summary.
+3. Build a second mask to find the patient(s) in Cohort 1 whose `Tumour_size` equals that maximum, and display those rows (at least show `Tumour_size`).
+
+---
+
+## Hints
+
+When you call `.describe()` on a single column (a Series), the result is another Series. You can access the maximum value using `summary['max']` or `summary.loc['max']`. Since you're working with a single column, you don't need to specify the column name in `.loc[]`.*
+
+---
+
+## Solution
+
+```{python}
+# 1) Mask for Cohort 1
+cohort_mask = metabric_patients.loc[:, 'Cohort'] == 1
+
+# 2) Describe tumour sizes in Cohort 1 and read the maximum
+summary = metabric_patients.loc[cohort_mask, 'Tumour_size'].describe()
+max_size = summary.loc['max']
+print('Maximum tumour size in Cohort 1:', max_size)
+
+# 3) Find patient(s) in Cohort 1 with that maximum size
+is_max = metabric_patients.loc[:, 'Tumour_size'] == max_size
+hits = metabric_patients.loc[cohort_mask & is_max, ['Tumour_size']]
+print('\nPatients at the maximum tumour size:\n', hits)
+```
+
+- We first filter rows with a boolean mask (`Cohort == 1`). The `.describe()` summary on the masked `Tumour_size` gives labeled entries: `count`, `mean`, `std`, `min`, `25%`, `50%`, `75%`, and `max`. We can retrieve the maximum using `summary.loc['max']` or (`summary['max']`). We then use another boolean comparison (`== max_size`) to show the row(s) that match that exact value.
+
+
+# Analysing Patient Data
+
+- Describe data with simple summaries (average, median, spread, totals, and counts).
+- Choose whether to summarize across columns or across rows.
+- Filter the dataset using conditions and summarize just those rows.
+- Handle missing values so results are trustworthy.
+- Explore categories.
+
+---
+
+## Statistics on Data
+
+- Start with descriptive statistics before complex models.
+- Answer “what is typical?” (central tendency) and “how much do values vary?” (spread).
+- Use summaries to build intuition and spot issues (e.g., unexpected scales, missing values).
+- Pandas provides many built-in functions/methods for summary statistics.
+
+---
+
+### Mean 
+
+1. Mean (*average*) of a single column (one variable):
+
+```{python}
+metabric_patients.loc[:, 'Survival_time'].mean()
+```
+
+- This answers “on average, what is the value of this variable?” 
+
+---
+
+### Mean
+
+2. Mean of all numeric columns (column-wise):
+
+```{python}
+metabric_patients.mean(numeric_only = True)
+```
+
+- Adding `numeric_only=True` tells pandas to ignore non-numeric columns when computing a statistic across the whole DataFrame. 
+
+---
+
+### Mean
+
+3. Mean across each row:
+
+```{python}
+metabric_patients.mean(axis=1, numeric_only=True)
+```
+
+- This treats each row as a small collection of values and averages across columns. 
+- It only makes sense when the columns you include are on a comparable scale (for example, a set of related measurements). 
+- The `axis=1` argument tells Pandas to compute across columns for each row.
+
+---
+
+::: {.callout-note}
+## Understanding `axis=`
+
+- `axis=0` (default) means “by column”: compute one result per column across rows.
+- `axis=1` means “by row”: compute one result per row across columns.
+
+Most reducers (`sum`, `mean`, `min`, `max`, etc.) accept `axis=` and follow the same pattern.
+:::
+
+---
+
+### Median
+
+- The median (*robust "typical" value*) is the middle value when data are sorted. 
+- It is not affected by extreme values (outliers) and is often used to describe the central tendency of data. 
+
+```{python}
+metabric_patients.median(numeric_only = True)
+```
+
+---
+
+## Visualising mean vs median:
+
+```{python}
+#| echo: false
+#| fig-align: center
+import matplotlib.pyplot as plt
+
+# choose a numeric column to visualise
+vals = metabric_patients.loc[:, 'Tumour_size'].dropna()
+
+plt.figure(figsize=(6, 3.5))
+plt.hist(vals, bins=30, color='#8ecae6', edgecolor='white')
+plt.axvline(vals.mean(), color='#d62828', linestyle='--', linewidth=2, label='Mean')
+plt.axvline(vals.median(), color='#f77f00', linestyle='-', linewidth=2, label='Median')
+plt.title('Tumour size distribution')
+plt.xlabel('Tumour size (mm)')
+plt.ylabel('Count')
+plt.legend()
+plt.tight_layout()
+```
+
+- The mean pulls toward extreme values more than the median. In skewed distributions, the two lines will sit apart.
+
+---
+
+### Standard Deviation 
+
+- The standard deviation (*spread around the mean*) measures the amount of variation or dispersion in a dataset. 
+- A lower standard deviation indicates that data points are close to the mean, while a higher standard deviation indicates greater variability. 
+
+```{python}
+metabric_patients.std(numeric_only = True)
+```
+
+---
+
+### Variance 
+
+- Variance (*spread in squared units*) is the square of the standard deviation. 
+- It quantifies how much individual data points deviate from the mean. It’s useful mathematically, but note its units are squared (e.g., cm² if the original variable is in cm). 
+
+```{python}
+metabric_patients.var(numeric_only = True)
+```
+
+---
+
+### Sum 
+
+1. Total for each numeric column (column-wise):
+
+```{python}
+metabric_patients.sum(numeric_only = True)
+```
+
+---
+
+### Sum 
+
+2. Total for a single column (e.g., Mutation_count across all patients):
+
+```{python}
+metabric_patients.loc[:, 'Mutation_count'].sum()
+```
+
+---
+
+### Sum 
+
+3. Row-wise sum of selected numeric columns (use with care):
+
+```{python}
+metabric_patients.loc[:, 'ESR1':'MLPH'].sum(axis = 1, numeric_only = True)
+```
+
+::: {.callout-caution}
+If you sum across rows (`axis=1`), be sure the columns are on comparable scales.
+:::
+
+---
+
+### Count 
+
+1. Count of non-missing values for each column:
+
+```{python}
+metabric_patients.count()
+```
+
+- This returns the counts or the number of entries excluding missing values for each column in the dataframe. 
+
+---
+
+### Count 
+
+2. Count of non-missing values for a single column:
+
+```{python}
+metabric_patients.loc[:, 'Survival_status'].count()
+```
+
+- This returns a single number - non-missing entries in the Survival_status column.
+
+---
+
+## Common Summary Statistics
+
+::: scrolling
+```{=html}
+<table>
+  <thead>
+    <tr>
+      <th>Function</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><code>count</code></td>
+      <td>Number of non-NA observations</td>
+    </tr>
+    <tr>
+      <td align="center"><code>sum</code></td>
+      <td>Sum of values</td>
+    </tr>
+    <tr>
+      <td align="center"><code>mean</code></td>
+      <td>Mean of values</td>
+    </tr>
+    <tr>
+      <td align="center"><code>median</code></td>
+      <td>Arithmetic median of values</td>
+    </tr>
+    <tr>
+      <td align="center"><code>min</code></td>
+      <td>Minimum</td>
+    </tr>
+    <tr>
+      <td align="center"><code>max</code></td>
+      <td>Maximum</td>
+    </tr>
+    <tr>
+      <td align="center"><code>mode</code></td>
+      <td>Mode</td>
+    </tr>
+    <tr>
+      <td align="center"><code>abs</code></td>
+      <td>Absolute Value</td>
+    </tr>
+    <tr>
+      <td align="center"><code>prod</code></td>
+      <td>Product of values</td>
+    </tr>
+    <tr>
+      <td align="center"><code>std</code></td>
+      <td>Bessel-corrected sample standard deviation</td>
+    </tr>
+    <tr>
+      <td align="center"><code>var</code></td>
+      <td>Unbiased variance</td>
+    </tr>
+    <tr>
+      <td align="center"><code>sem</code></td>
+      <td>Standard error of the mean</td>
+    </tr>
+    <tr>
+      <td align="center"><code>skew</code></td>
+      <td>Sample skewness (3rd moment)</td>
+    </tr>
+    <tr>
+      <td align="center"><code>kurt</code></td>
+      <td>Sample kurtosis (4th moment)</td>
+    </tr>
+    <tr>
+      <td align="center"><code>quantile</code></td>
+      <td>Sample quantile (value at %)</td>
+    </tr>
+    <tr>
+      <td align="center"><code>cumsum</code></td>
+      <td>Cumulative sum</td>
+    </tr>
+    <tr>
+      <td align="center"><code>cumprod</code></td>
+      <td>Cumulative product</td>
+    </tr>
+    <tr>
+      <td align="center"><code>cummax</code></td>
+      <td>Cumulative maximum</td>
+    </tr>
+    <tr>
+      <td align="center"><code>cummin</code></td>
+      <td>Cumulative minimum</td>
+    </tr>
+  </tbody>
+</table>
+```
+:::
+
+---
+
+## Statistics on Filtered Data
+
+- Recall how we select specific rows using boolean conditions (masks).
+- We can apply the same statistics to filtered subsets as to full DataFrames.
+- All statistical operators that work on entire DataFrames also work on slices.
+
+Let's say we want to analyze patients from cohort 1, whose IDs range from MB-0000 to MB-0906. To find the maximum tumour size among these patients:
+
+```{python}
+cohort_mask = metabric_patients.loc[:, "Cohort"] == 1
+
+print('Maximum for Tumour_size column for cohort 1 patients:')
+print(metabric_patients.loc[cohort_mask, "Tumour_size"].max())
+```
+
+---
+
+## Statistics on Filtered Data
+
+For the same set of filtered patients, you can check the minimum mutation count and identify which patient(s) has it:
+
+```{python}
+print('\nMinimum for Mutation_count column for cohort 1 patients:')
+print(metabric_patients.loc[cohort_mask, "Mutation_count"].min())
+```
+
+---
+
+## Challenge: Summaries for Breast Invasive Ductal Carcinoma
+
+Build a small workflow that focuses on a clinically defined subset and its gene expression profile.
+
+1. Create a boolean mask for patients whose `Cancer_type` is "Breast Invasive Ductal Carcinoma" (IDC).
+2. Using that mask, select only the expression columns for those patients. 
+3. Compute column-wise summaries across patients for the expression columns:
+    - Mean for each gene
+    - Median for each gene
+    
+4. Compute a left-to-right cumulative sum across the expression columns for each patient. In each row, the final expression column should equal the total (sum) across all genes for that patient.
+
+---
+
+## Hints
+- In this dataset the expression columns starts at the `ESR1` column and runs to the end of the table.
+- Use `.eq('Breast Invasive Ductal Carcinoma')` or `== 'Breast Invasive Ductal Carcinoma'` to build the mask.
+- Column-wise summaries are the default (`axis=0`), row-wise requires `axis=1`.
+
+---
+
+## Solution
+
+```{python}
+# 1) Mask for IDC patients
+cancer_type_mask = metabric_patients.loc[:, 'Cancer_type'] == 'Breast Invasive Ductal Carcinoma'
+```
+
+```{python}
+# 2) Expression-only slice for IDC patients (from ESR1 to end)
+expr_idc = metabric_patients.loc[cancer_type_mask, 'ESR1':]
+expr_idc
+```
+
+---
+
+## Solution
+
+```{python}
+# 3) Column-wise summaries (one value per gene)
+expr_means = expr_idc.mean()      # axis=0 by default
+expr_means
+```
+
+```{python}
+expr_medians = expr_idc.median()  # axis=0 by default
+expr_medians
+```
+
+---
+
+## Solution
+
+```{python}
+# 4) Row-wise cumulative sums (one row per patient, accumulating across genes)
+expr_cumsum_per_patient = expr_idc.cumsum(axis=1)
+```
+
+---
+
+
+### Missing Values
+
+- It’s important to make sure your data doesn’t contain missing values (represented as `NaN`- "Not a Number"). 
+- Missing values can cause errors or misleading results in your analysis. 
+- Drop rows where either '3-gene_classifier' or 'GATA3' is missing:
+
+```{python}
+subset = metabric_patients.loc[:, ['3-gene_classifier', 'GATA3']].dropna()
+print('Rows before:', len(metabric_patients))
+print('Rows after dropna:', len(subset))
+```
+
+- By default, `dropna()` removes rows where any column has a missing value.
+
+---
+
+### Unique Values
+
+- When you’re exploring categorical columns, a first sanity check is to list which labels actually appear. 
+- This helps you spot typos ("Lum a" vs "LumA"), unexpected categories, or missing values before you count or plot. 
+- Pandas provides `.unique()` for this: 
+
+```{python}
+metabric_patients.loc[:, '3-gene_classifier'].unique()
+```
+
+- This will include missing values. Use `dropna()` first if you want to exclude missing values from the listing.
+
+```{python}
+# Distinct labels, excluding missing entries
+metabric_patients.loc[:, '3-gene_classifier'].dropna().unique()
+```
+---
+
+### Unique Values
+
+- The order of the output is based on first appearance in the column; it’s not alphabetical. If you want you can sort the categories: 
+
+```{python}
+labels = metabric_patients.loc[:, '3-gene_classifier'].dropna().unique()
+sorted(labels)
+```
+
+---
+
+### Frequency of Values 
+
+- To inspect how often each distinct value appears in a column, use `value_counts()`. 
+- By default it returns counts sorted by frequency.
+
+```{python}
+#| eval: false
+metabric_patients.value_counts()
+```
+
+- Each index of the output represents a unique combination of values across all columns, and the count shows how many rows share that exact combination. 
+- Since each row in our dataset is unique, all counts will be 1—this is a quick way to check for duplicate rows.
+
+---
+
+### Frequency of Values 
+
+- For a specific column (e.g., `3-gene_classifier`):
+
+```{python}
+metabric_patients.loc[:, '3-gene_classifier'].value_counts()
+```
+
+---
+
+### Frequency of Values 
+
+- Set `normalize=True` to display proportions (percentages) rather than raw counts.
+
+```{python}
+metabric_patients.loc[:, '3-gene_classifier'].value_counts(normalize=True)
+```
+
+- To display percentages, multiply the result by 100:
+
+```{python}
+metabric_patients.loc[:, '3-gene_classifier'].value_counts(normalize=True) * 100
+```
+
+---
+
+### Frequency of Values 
+
+- By default, missing values (or `NaN`) are excluded from the result. 
+- If you want to include missing values, you can pass the argument `dropna=False`: 
+
+```{python}
+metabric_patients.loc[:, '3-gene_classifier'].value_counts(dropna=False)
+```
+
+---
+
+### Frequency of Values 
+
+- Counts returned are automatically sorted from most to least frequent. 
+- If you want to sort the counts by the actual labels (in alphabetical order), you can use the `sort_index()` method. 
+
+```{python}
+metabric_patients.loc[:, 'Integrative_cluster'].value_counts().sort_index()
+```
+
+---
+
+## Challenge: Summarize Categories (Cellularity)
+
+1) List the unique labels in `Cellularity`:
+   - Excluding missing values
+   - Including missing values
+
+2) Show `Cellularity` label counts with:
+   - Raw counts (include and exclude missing values)
+   - Percentages 
+   - Alphabetical order 
+
+3) How many patients have High cellularity but no recorded 3-gene classifier? (i.e., missing value in 3-gene classifier column)
+
+---
+
+## Hints
+
+- To count rows, use `.shape[0]` or `len(...)`.
+- “No recorded 3-gene classifier” means missing values. 
+- Use `.shape[0]` to get number of rows.
+- Patients with high cellularity but no recorded 3-gene classifier = patients with high cellularity and all records in 3-gene classifier - patients with high cellularity and non missing values in 3-gene classifier.
+
+---
+
+## Solution
+
+```{python}
+# 1) Unique labels
+metabric_patients.loc[:, 'Cellularity'].unique()
+metabric_patients.loc[:, 'Cellularity'].dropna().unique()
+```
+
+```{python}
+# 2) Label counts
+metabric_patients.loc[:, 'Cellularity'].value_counts(dropna=False)
+metabric_patients.loc[:, 'Cellularity'].value_counts()
+metabric_patients.loc[:, 'Cellularity'].value_counts(normalize=True) * 100
+metabric_patients.loc[:, 'Cellularity'].value_counts().sort_index()
+```
+
+## Solution
+
+```{python}
+# 3) mask for high cellularity
+mask_cell = metabric_patients.loc[:, 'Cellularity'] == 'High'
+# no. of patients with high cellularity 
+n_cell = metabric_patients.loc[mask_cell, '3-gene_classifier'].shape[0]
+# no. of patients with high cellularity and non-missing values in 3-gene_classifier
+n_cell_3gene = metabric_patients.loc[mask_cell, '3-gene_classifier'].dropna().shape[0]
+# no. of patients with high cellularity and missing values in 3-gene_classifier
+n_cell - n_cell_3gene
+```
+
+```{python}
+# 3) Patients with High cellularity and NO recorded 3-gene classifier
+mask_cell_high = metabric_patients.loc[:, 'Cellularity'].eq('High')
+no_classifier_count = metabric_patients.loc[mask_cell_high, '3-gene_classifier'].isna().sum()
+no_classifier_count
+```
+
+# Visualising Data
+
+ - Load and inspect the dataset to pick suitable plots.
+ - Create scatter, bar, box, and line plots with Matplotlib.
+ - Add simple customisation (labels, legends, colours, grids) for readability.
+ - Save figures to common formats for reports and slides.
+
+---
+
+## Import Library
+
+- Matplotlib is the most widely used plotting library in Python. 
+- It provides a flexible framework for creating a wide variety of static, animated, and interactive visualisations, from simple line plots and scatter plots to complex heatmaps and 3D charts. 
+- Matplotlib is highly customizable, allowing you to control every aspect of your figures, including colors, labels, legends, and more. 
+
+
+- First, we will import the `pyplot` module from matplotlib.
+
+```{python}
+import matplotlib.pyplot as plt
+```
+
+---
+
+## Your First Plot
+
+- Let’s explore the relationship between two important genes in breast cancer: the transcription factor GATA3 and the estrogen receptor ESR1. 
+- Plot GATA3 expression on the x-axis and ESR1 expression on the y-axis.
+- First, extract these columns and assign them to variables for easy plotting:
+
+```{python}
+gata3 = metabric_patients.loc[:, "GATA3"]
+esr1 = metabric_patients.loc[:, "ESR1"]
+```
+
+::: {.callout-tip}
+
+### Column names are case-sensitive
+
+If you see a `KeyError: 'GATA3'` (or similar), the exact column name may differ. Check available columns:
+
+```{python}
+#| eval: false
+list(metabric_patients.columns)
+```
+
+If the dataset uses a different case (e.g., `gata3`), adjust the code accordingly.
+:::
+
+---
+
+## Your First Plot
+
+- Next, we are going to create our first scatter plot with `plt.scatter`.
+
+```{python}
+plt.scatter(gata3, esr1)
+```
+
+---
+
+## Add Axis Labels
+
+- To make it clear which gene is represented on each axis, let’s add axis labels and a descriptive title.
+
+```{python}
+plt.scatter(gata3, esr1)
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+```
+
+---
+
+## Axis Labels Font
+
+- You can also control the look of these texts, for example the font size:
+
+```{python}
+plt.scatter(gata3, esr1)
+plt.xlabel("GATA3 expression", fontsize=11)
+plt.ylabel("ESR1 expression", fontsize=11)
+plt.title("GATA3 vs ESR1 (Metabric patients)", fontsize=12)
+```
+
+---
+
+### Change Point Shape 
+
+You can change the shape of the points using the `marker` argument in `plt.scatter`. Common marker shapes include:
+
+- `'o'` : circle (default)
+- `'s'` : square
+- `'^'` : triangle up
+- `'v'` : triangle down
+- `'D'` : diamond
+- `'x'` : x
+- `'+'` : plus
+
+---
+
+### Change Point Shape 
+
+- For example, to use x:
+
+```{python}
+plt.scatter(gata3, esr1, marker='x')
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Squares)")
+```
+
+- Try different marker styles to see which best fits your data and audience.
+
+---
+
+### Adding Color Size and Transparency
+
+- The above plot can be made clearer by adjusting the point color, size and transparency:
+
+```{python}
+plt.scatter(gata3, esr1, alpha=0.6, s=14, color="steelblue")
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+```
+
+---
+
+### Adding Color Size and Transparency
+
+- **Transparency:**
+
+    - `alpha` controls transparency from 0 (fully transparent) to 1 (fully opaque). 
+    - Values around 0.4–0.7 help with dense clouds of points (reduces overplotting). 
+
+- **Marker Size:** 
+
+    - `s` argument sets marker size in points squared (pt²). 
+    - Typical values for scatter plots range from 8–30.
+
+- **Color:** 
+
+    - Argument `color` (or `c`) sets the marker face colour. 
+    - You can specify colors using: named strings (like `"red"` or `"steelblue"`), hexadecimal codes (such as `"#1f77b4"`) or even RGB tuples. 
+    - For a list of available color names and formats, see the [Matplotlib color documentation](https://matplotlib.org/stable/users/explain/colors/colors.html#colors-def). 
+
+---
+
+## Adding Outline for Points    
+
+```{python}
+plt.scatter(
+	gata3, esr1,
+	s=16, alpha=0.6, color="steelblue",
+	edgecolor="blue",   # thin white outline
+	linewidths=0.3      # width of the outline
+)
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+```
+
+---
+
+#### Colour by a third variable
+
+- If you have another numeric column (for example, ESR1 itself), you can map values to colour with a colormap:
+
+```{python}
+# Example: colour points by ESR1 value using the 'viridis' colormap
+plt.scatter(gata3, esr1, c=esr1, cmap="viridis", s=14, alpha=0.6)
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 coloured by ESR1")
+plt.colorbar(label="ESR1")  # add a colourbar legend
+```
+
+---
+
+### Control Axis Limits
+
+By default, Matplotlib “autoscales” to fit your data. Manually setting limits is helpful when you:
+
+- Compare multiple figures or panels and want the same scale on each.
+- Focus on a region of interest (e.g., crop away extreme outliers for clarity).
+- Make slopes and relative differences easier to interpret across plots.
+
+---
+
+### Control Axis Limits
+
+- You can also set limits based on the data range with a small padding:
+
+```{python}
+plt.scatter(gata3, esr1, alpha=0.6, s=14, color="steelblue")
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+plt.xlim(0, 20)
+plt.ylim(0, 20)
+```
+
+---
+
+### Control Axis Limits
+
+- If your variables are on the same scale and you want geometry to be visually comparable, set an equal aspect ratio:
+
+```{python}
+plt.scatter(gata3, esr1, alpha=0.6, s=14, color="steelblue")
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+plt.axis('equal')  # 1 unit on x equals 1 unit on y
+```
+
+---
+
+### Control Axis Limits
+
+- For data spanning orders of magnitude, log scales can reveal structure:
+
+```{python}
+plt.scatter(gata3, esr1, alpha=0.6, s=14, color="steelblue")
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+plt.xscale('log')
+plt.yscale('log')
+```
+
+Note: log scales require strictly positive values. 
+
+---
+
+### Add Grid Lines
+
+- Grid lines make it easier to read values across from the axes, especially in dense scatter plots and categorical charts. 
+
+```{python}
+plt.scatter(gata3, esr1, alpha=0.6, s=14, color="steelblue")
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 with grid")
+
+# Turn on light dashed grid lines behind the points
+plt.grid(True, which="major", axis="both", linestyle="--", linewidth=0.5, alpha=0.4)
+```
+
+---
+
+### Add Grid Lines
+
+- Only y-axis grid (great for bar/box plots):
+
+```{python}
+plt.grid(True, axis="y", linestyle="--", alpha=0.5)
+```
+
+---
+
+### Add Grid Lines
+
+- Add minor ticks and a faint minor grid:
+
+```{python}
+plt.minorticks_on()
+plt.grid(True, which="minor", linestyle=":", linewidth=0.4, alpha=0.2)
+```
+
+---
+
+### Adding Style
+
+- Styles control the overall appearance of the plot, including colours, gridlines, fonts, background color and text styles. 
+
+```{python}
+plt.style.use('seaborn-v0_8-whitegrid')
+plt.scatter(gata3, esr1, alpha=0.6, s=14, color="steelblue")
+plt.xlabel("GATA3 expression")
+plt.ylabel("ESR1 expression")
+plt.title("GATA3 vs ESR1 (Metabric patients)")
+```
+
+---
+
+### Available Styles
+
+- Other popular styles: `'ggplot'`, `'classic'`, `'bmh'`, `'fivethirtyeight'`. See all available styles:
+
+```{python}
+print(plt.style.available)
+```
+
+---
+
+### Adding Style
+
+- You can apply a style globally with `plt.style.use(...)`, or only for a few lines using a context
+manager so the style doesn’t “leak” into later figures:
+
+```{python}
+with plt.style.context('ggplot'):
+    plt.scatter(gata3, esr1, s=14, alpha=0.6)
+    plt.xlabel("GATA3 expression")
+    plt.ylabel("ESR1 expression")
+    plt.title("GATA3 vs ESR1 (Metabric patients)")
+```
+
+---
+
+### Set Default Style
+
+- To go back to Matplotlib defaults after changing styles globally, run:
+
+```{python}
+plt.style.use('default')
+```
+
+---
+
+## Save Figures to File
+
+To save your plot as a PNG or PDF for publication:
+
+```{python}
+#| eval: false
+plt.savefig("scatter_gata3_esr1.png", dpi=300)
+```
+
+```{python}
+#| eval: false
+plt.savefig("scatter_gata3_esr1.pdf")
+```
+
+---
+
+## Challenge: Scatter Plot
+
+Create a scatter plot of ESR1 expression vs Nottingham prognostic index as shown below and save is as a PDF. 
+
+![](../vignettes/images/scatter_esr1_vs_npi.png)
+
+---
+
+## Hints
+
+Use the "inferno" colormap, set marker size to 25, and transparency (alpha) to 0.6. Colour points by ESR1.*
+
+---
+
+## Solution
+
+```{python}
+#| eval: false
+esr1 = metabric_patients.loc[:, "ESR1"]
+npi = metabric_patients.loc[:, "Nottingham_prognostic_index"]
+
+with plt.style.context('ggplot'):
+    plt.scatter(npi, esr1, c=esr1, cmap="inferno", s=25, alpha=0.6)
+    plt.xlabel("Nottingham prognostic index")
+    plt.ylabel("ESR1 expression")
+    plt.title("ESR1 expression vs NPI")
+    plt.savefig("scatter_esr1_vs_npi.png")
+```
+
+---
+
+
+## Bar Charts
+
+- Bar charts are useful for comparing values across categories. 
+- The metabric study redefined how we think about breast cancer by identifying and characterizing several new subtypes, referred to as integrative clusters. 
+
+```{python}
+# Step 1: select the categorical column
+int_clust = metabric_patients.loc[:, "Integrative_cluster"]
+int_clust
+
+# Step 2: count how many patients fall into each category
+counts = int_clust.value_counts()
+counts
+```
+
+---
+
+## Bar Charts
+
+- Bar chart of the number of patients whose cancers fall within each subtype in the metabric cohort:
+
+```{python}
+# Step 3: draw a basic bar chart (no labels yet)
+plt.bar(counts.index, counts.values)
+```
+
+---
+
+## Bar Charts
+
+- We can then make the figure self-explanatory by adding axis labels, a title, and readable tick labels.
+
+```{python}
+#| eval: false
+plt.bar(counts.index, counts.values)
+plt.xlabel("Integrative cluster")
+plt.ylabel("Number of patients")
+plt.title("Patient counts by integrative cluster")
+plt.xticks(rotation=30, ha='right')  # rotate long labels so they don’t overlap
+```
+
+---
+
+```{python}
+#| echo: false
+plt.bar(counts.index, counts.values)
+plt.xlabel("Integrative cluster")
+plt.ylabel("Number of patients")
+plt.title("Patient counts by integrative cluster")
+plt.xticks(rotation=30, ha='right')  # rotate long labels so they don’t overlap
+```
+
+---
+
+## Bar Charts
+
+- By default, `value_counts()` orders bars by frequency (highest first). You may prefer alphabetical
+order:
+
+```{python}
+counts_alpha = counts.sort_index()
+plt.bar(counts_alpha.index, counts_alpha.values)
+plt.xlabel("Integrative cluster")
+plt.ylabel("Number of patients")
+plt.title("Patient counts by cluster (alphabetical)")
+plt.xticks(rotation=30, ha='right')
+plt.tight_layout()
+```
+
+---
+
+## Bar Charts
+
+- Custom order (only the labels present will be plotted, in this order):
+
+```{python}
+desired = [
+    "1", "2", "3", "4ER-", "4ER+", "5", "6", "7", "8", "9", "10"
+]
+
+# Keep only categories that exist in our data, and reorder
+present = [lab for lab in desired if lab in counts.index]
+counts_custom = counts.reindex(present)
+counts_custom
+```
+
+---
+
+## Bar Charts
+
+- Custom ordered x labels:
+
+```{python}
+plt.bar(counts_custom.index, counts_custom.values)
+plt.xlabel("Integrative cluster")
+plt.ylabel("Number of patients")
+plt.title("Patient counts by cluster (custom order)")
+plt.xticks(rotation=30, ha='right')
+plt.tight_layout()
+```
+
+---
+
+## Challenge — Colourful bars with outlines
+
+Create a bar chart of patient counts by cancer type, then add a fill colour and a contrasting edge colour to make the bars stand out.
+
+---
+
+## Hints
+
+- Use the `color=` keyword to set the bar fill.
+- Use `edgecolor=` to set the bar borders and `linewidth=` to control border thickness.
+- Start from `metabric_patients.loc[:, "Cancer_type"]` to compute counts.
+- Rotate x‑tick labels (e.g., `plt.xticks(rotation=15, ha='right')`) for long category names.
+- Use `plt.tight_layout()` to automatically adjust subplot parameters so that the plot fits nicely within the figure area.
+
+---
+
+## Solution
+
+```{python}
+#| eval: false
+cancer_type = metabric_patients.loc[:, "Cancer_type"]
+counts = cancer_type.value_counts()
+
+# Order alphabetically for readability
+counts_alpha = counts.sort_index()
+
+# Single fill colour for all bars, with a dark edge and thin outline
+plt.bar(
+    counts_alpha.index,
+    counts_alpha.values,
+    color="skyblue",      # bar fill
+    edgecolor="darkblue", # bar border
+    linewidth=0.8         # border thickness
+)
+plt.xlabel("Cancer type")
+plt.ylabel("Number of patients")
+plt.title("Patient counts by cancer type")
+plt.xticks(rotation=15, ha='right', fontsize=8)
+plt.grid(axis="y", linestyle=":")
+plt.tight_layout()
+```
+
+---
+
+## Solution
+
+```{python}
+#| echo: false
+cancer_type = metabric_patients.loc[:, "Cancer_type"]
+counts = cancer_type.value_counts()
+
+# Order alphabetically for readability
+counts_alpha = counts.sort_index()
+
+# Single fill colour for all bars, with a dark edge and thin outline
+plt.bar(
+    counts_alpha.index,
+    counts_alpha.values,
+    color="skyblue",      # bar fill
+    edgecolor="darkblue", # bar border
+    linewidth=0.8         # border thickness
+)
+plt.xlabel("Cancer type")
+plt.ylabel("Number of patients")
+plt.title("Patient counts by cancer type")
+plt.xticks(rotation=15, ha='right', fontsize=8)
+plt.grid(axis="y", linestyle=":")
+plt.tight_layout()
+```
+
+---
+
+
+## Box Plot
+
+- Box plots (or *box & whisker plots*) are a particular favourite seen in many seminars and papers. 
+
+![](https://miro.medium.com/max/18000/1*2c21SkzJMf3frPXPAR_gZA.png) 
+
+---
+
+## Box Plot
+
+- The first argument to `plt.boxplot(...)` is a list of arrays or sequences, each containing the values for one group (e.g., ER-negative and ER-positive patients). 
+- A list is a way to store multiple items together in a single variable. 
+- In Python, you create a list by placing items inside square brackets, like this: `[item1, item2, item3]`. 
+
+```{python}
+# Select all ER status positive patients
+mask_pos = metabric_patients.loc[:, "ER_status"] == "Positive"
+pos = metabric_patients.loc[mask_pos, "GATA3"]
+
+# Select all ER status negative patients
+mask_neg = metabric_patients.loc[:, "ER_status"] == "Negative"
+neg = metabric_patients.loc[mask_neg, "GATA3"]
+```
+
+---
+
+## Box Plot
+
+- Compare GATA3 expression between ER‑negative and ER‑positive patients.
+
+```{python}
+plt.boxplot([neg, pos], labels=["Negative", "Positive"]) 
+plt.xlabel("ER status")
+plt.ylabel("GATA3 expression")
+plt.title("GATA3 by ER status")
+plt.tight_layout()
+```
+
+---
+
+## Challenge — Box plot by 3‑gene classifier
+
+Create a box plot of GATA3 expression across categories of the 3‑gene classifier. Required data is already given for you.
+
+```{python}
+# Select relevant columns and drop rows with missing values
+subset = metabric_patients.loc[:, ["3-gene_classifier", "GATA3"]].dropna()
+
+# Get sorted list of unique classifier categories for x-axis labels
+labels = sorted(subset.loc[:, "3-gene_classifier"].unique())
+
+# For each classifier category, extract GATA3 expression values as a group
+groups = [subset.loc[subset["3-gene_classifier"] == lab, "GATA3"].values for lab in labels]
+```
+
+---
+
+## Solution
+
+```{python}
+plt.boxplot(groups, labels=labels)
+plt.xlabel("3-gene_classifier")
+plt.ylabel("GATA3 expression")
+plt.title(f"GATA3 by 3-gene_classifier")
+plt.xticks(rotation=15, ha='right')
+plt.tight_layout()
+```
+
+---
+
+## Line Plot
+
+```{python}
+#| eval: false
+# Select and sort ages (ascending) and plot cumulative count vs age
+ages = metabric_patients.loc[:, "Age_at_diagnosis"]
+ages_sorted = ages.sort_values().reset_index(drop=True)
+
+# x = age, y = cumulative count (patient index after sorting)
+plt.plot(ages_sorted.values, range(1, len(ages_sorted) + 1))
+plt.xlabel("Age at diagnosis")
+plt.ylabel("Patient index (sorted by age)")
+plt.title("Age at diagnosis (sorted)")
+plt.tight_layout()
+```
+
+- `plt.plot(...)` command plots a cumulative distribution or a simple line plot. 
+- `range(1, len(ages_sorted) + 1)` creates a sequence of integers starting at 1 up to the number of ages. It’s often used to represent the rank or position of each age in the sorted list. 
+- It plots each age (on the x-axis) against its rank (on the y-axis). 
+
+---
+
+## Line Plot
+
+- Connect points in order and are ideal for trends over a continuous or ordered x‑axis. 
+
+```{python}
+#| echo: false
+# Select and sort ages (ascending) and plot cumulative count vs age
+ages = metabric_patients.loc[:, "Age_at_diagnosis"]
+ages_sorted = ages.sort_values().reset_index(drop=True)
+
+# x = age, y = cumulative count (patient index after sorting)
+plt.plot(ages_sorted.values, range(1, len(ages_sorted) + 1))
+plt.xlabel("Age at diagnosis")
+plt.ylabel("Patient index (sorted by age)")
+plt.title("Age at diagnosis (sorted)")
+plt.tight_layout()
+```
+
+---
+
+## Unsorted Ages
+
+- If you skip sorting, the x-values are out of order and the line no longer represents a cumulative curve.
+
+```{python}
+plt.plot(ages.values, range(1, len(ages) + 1))
+plt.xlabel("Age at diagnosis")
+plt.ylabel("Patient index")
+plt.title("Age at diagnosis (unsorted)")
+plt.tight_layout()
+```
+
+---
+
+## Line Plot
+
+- If you want the y-axis to show percentages, you’d need to normalize the ranks.
+
+- To add colour and style:
+
+```{python}
+plt.plot(ages_sorted.values, range(1, len(ages_sorted) + 1), color="green", linewidth=1.8, linestyle="-")
+plt.xlabel("Age at diagnosis")
+plt.ylabel("Patient index (sorted by age)")
+plt.title("Age at diagnosis (styled line)")
+plt.grid(linestyle=":", alpha=0.4)
+```
+
+---
+
+## Helpful Resources for Visualising
+
+- Matplotlib documentation home: <https://matplotlib.org/stable/>
+- Gallery of examples (copy‑paste friendly): <https://matplotlib.org/stable/gallery/index.html>
+- Plot types overview: <https://matplotlib.org/stable/plot_types/index.html>
+- Tutorials (getting started to advanced): <https://matplotlib.org/stable/tutorials/index.html>
+- Pyplot tutorial: <https://matplotlib.org/stable/tutorials/introductory/pyplot.html>
+- Cheatsheets (quick reference): <https://matplotlib.org/cheatsheets/>
+- Colormap reference: <https://matplotlib.org/stable/users/explain/colors/colormaps.html>
+- Style sheets reference: <https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html>
+
+---
+
+# Thank You
